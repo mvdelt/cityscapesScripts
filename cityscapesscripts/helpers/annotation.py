@@ -107,6 +107,8 @@ class CsPoly(CsObject):
         text = "Object: {} - {}".format(self.label, polyText)
         return text
 
+    # i.21.3.4.23:08) 인풋 jsonText 는 ~~polygons.json 자체가 아니고, 거기서 한개의 'object'임. 
+    #  각 'object' 에는 'label', 'polygon' 이 있음. {'label': "person", 'polygon':[[12,22], [45,333], ...]} 이런식.
     def fromJsonText(self, jsonText, objId=-1):
         self.id = objId
         self.label = str(jsonText['label'])
@@ -378,6 +380,7 @@ class Annotation:
         self.objects = []
         # load objects
         if self.objectType != CsObjectType.IGNORE2D:
+            # i.21.3.4.23:08) jsonDict 는 ~~polygons.json 에 해당하고, objIn 은 거기서의 한개의 옵젝. {'label': "person", 'polygon':[[12,22], [45,333], ...]} 이런식.
             for objId, objIn in enumerate(jsonDict['objects']):
                 if self.objectType == CsObjectType.POLY:
                     obj = CsPoly()

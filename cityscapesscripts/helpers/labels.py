@@ -30,7 +30,7 @@ Label = namedtuple( 'Label' , [
                     # to our evaluation server using the regular IDs above!
                     # For trainIds, multiple labels might have the same ID. Then, these labels
                     # are mapped to the same class in the ground truth images. For the inverse
-                    # mapping, we use the label that is defined first in the list below.
+                    # mapping, we use the label that is defined first in the list below.   # <-inverse mapping에선 아래 labels리스트의 (동일한 trainId를 가지는 Label들 중)1번째녀석을 사용한다고 되어있지./i.21.3.5.18:58.
                     # For example, mapping all void-type classes to the same ID in training,
                     # might make sense for some approaches.
                     # Max value is 255!
@@ -42,6 +42,10 @@ Label = namedtuple( 'Label' , [
 
     'hasInstances', # Whether this label distinguishes between single instances or not
 
+    # i.21.3.5.17:19) ignoreInEval 값이 True 면 evaluation(cityscapes 대회서버에서 하는 이밸류에이션)에 반영 안됨!!!
+    #  그래서 train시에만 자유롭게 정해서 이용하라고 trainId 가 있는거고, 
+    #  요아래 Label 들의 trainId 값들은 대회측에서 일단 기본값으로 정해논건데(맘대로바꿀수있음), 
+    #  ignoreInEval 이 True 인 놈들에 대해서는 trainId 값을 255나 -1등으로 해놓은듯.
     'ignoreInEval', # Whether pixels having this class as ground truth label are ignored
                     # during evaluations or not
 
@@ -110,7 +114,7 @@ name2label      = { label.name    : label for label in labels           }
 # id to label object
 id2label        = { label.id      : label for label in labels           }
 # trainId to label object
-trainId2label   = { label.trainId : label for label in reversed(labels) }
+trainId2label   = { label.trainId : label for label in reversed(labels) } # inverse mapping(trainId->Label 맵핑)에선 위 Label리스트의 (동일한 trainId를 가지는 Label들 중)1번째녀석을 사용하기위해 reverse 해줌. 안그러면 1번째가 아니라 마지막놈이 사용될테니./i.21.3.5.19:00.
 # category to list of label objects
 category2labels = {}
 for label in labels:
