@@ -7,7 +7,7 @@
 #  ~~polygons.json 만 있으면, cityscapesscripts 의 코드들을 사용해서 
 #  원하는형식의 어노테이션png파일들 생성가능하고(cityscapes 에서 어노테이션png 파일들 종류가 몇개 있지),
 #  createPanopticImgs.py 이용해서 ~~instanceIds.png 로부터
-#  COCO panoptic segmentation 형식(json, png)으로 변환가능함!!
+#  COCO panoptic segmentation 어노테이션형식(json & png 둘다필요)으로 변환가능함!!
 
 
 
