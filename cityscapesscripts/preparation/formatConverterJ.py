@@ -10,10 +10,71 @@
 #  COCO panoptic segmentation 어노테이션형식(json & png 둘다필요)으로 변환가능함!!
 
 
+# i. COCO object detection 형식.
+{
+    # 중요만.
+    "images": [image],
+    "annotations": [annotation], 
+    "categories": [category]
+}
+
+image{
+    # 중요만.
+    "id": int, 
+    "width": int, ###################
+    "height": int, ###################
+    "file_name": str, 
+}
+
+annotation{
+    "id": int, 
+    "image_id": int, 
+    "category_id": int, 
+    "segmentation": RLE or [polygon], ###################
+    "area": float,
+    "bbox": [x,y,width,height], 
+    "iscrowd": 0 or 1,
+}
+
+category{
+    "id": int, 
+    "name": str, ###################
+    "supercategory": str,
+}
+
+# coco polygon to cityscapes polygon 
+#  -> 근데 coco 에선 한 annotations 에 polygon 이 여러개잇을수잇는데..
+
+# catId to catName
+catId2catName = {cat["id"]: cat["name"] for cat in coco_obj_det_anno["categories"]}
+
+# imgId to objects
+imgId2objects = {}
+for annotation in coco_obj_det_anno["annotation"]:
+    obj = {
+        "label": catId2catName[annotation["category_id"]],
+        "polygon": ,
+    }
+    imgId2objects annotation["image_id"]
+
+
+# 위의 COCO object detection json파일을 deserialize 한것을 coco_obj_det_anno 라고하면,
+for imgDict in coco_obj_det_anno["images"]:
+    polygonsDict = {
+        "imgHeight": imgDict["width"],
+        "imgWidth": imgDict["height"],
+        "objects":
+    }
+
+for annotation in coco_obj_det_anno["annotations"]:
+    annotation["image_id"]
 
 
 
-# cityscapes 의 ~~polygons.json 형식은 아래와 같음.
+
+
+
+# cityscapes 의 ~~polygons.json 형식은 아래와 같음 (한 이미지당 한 json).
 {
     "imgHeight": 1024, 
     "imgWidth": 2048, 
