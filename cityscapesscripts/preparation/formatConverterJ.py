@@ -10,131 +10,148 @@
 #  COCO panoptic segmentation 어노테이션형식(json & png 둘다필요)으로 변환가능함!!
 
 
-# i. COCO object detection 형식.
-{
-    # 중요만.
-    "images": [image],
-    "annotations": [annotation], 
-    "categories": [category]
-}
+# # i. COCO object detection 형식.
+# {
+#     # 중요만.
+#     "images": [image],
+#     "annotations": [annotation], 
+#     "categories": [category]
+# }
 
-image{
-    # 중요만.
-    "id": int, 
-    "width": int, ###################
-    "height": int, ###################
-    "file_name": str, 
-}
+# image{
+#     # 중요만.
+#     "id": int, 
+#     "width": int, ###################
+#     "height": int, ###################
+#     "file_name": str, 
+# }
 
-annotation{
-    "id": int, 
-    "image_id": int, 
-    "category_id": int, 
-    "segmentation": RLE or [polygon], ###################
-    "area": float,
-    "bbox": [x,y,width,height], 
-    "iscrowd": 0 or 1,
-}
+# annotation{
+#     "id": int, 
+#     "image_id": int, 
+#     "category_id": int, 
+#     "segmentation": RLE or [polygon], ###################
+#     "area": float,
+#     "bbox": [x,y,width,height], 
+#     "iscrowd": 0 or 1,
+# }
 
-category{
-    "id": int, 
-    "name": str, ###################
-    "supercategory": str,
-}
+# category{
+#     "id": int, 
+#     "name": str, ###################
+#     "supercategory": str,
+# }
 
-# coco polygon to cityscapes polygon 
-#  -> 근데 coco 에선 한 annotations 에 polygon 이 여러개잇을수잇는데..
+import json, os
+
+# i. 불러올 어노json파일 경로. "path/to/ coco obj det annotation json file for loading"
+COCO_OBJ_DET_ANNO_JSON_LOADPATH_J = r"C:\Users\starriet\Downloads\convertTestJ\panopticSegJ.json"
+# i. 저장할 폴더의 경로. "path/to/ dir of cityscapes polygons.json file for saving"
+CITYSCAPES_POLYGONS_JSON_SAVEDIRPATH_J = r"C:\Users\starriet\Downloads\convertTestJ"
+
+# COCO object detection 형식의 어노json파일을 읽어들임.
+with open(COCO_OBJ_DET_ANNO_JSON_LOADPATH_J) as f:
+    coco_obj_det_anno = json.load(f)
 
 # catId to catName
 catId2catName = {cat["id"]: cat["name"] for cat in coco_obj_det_anno["categories"]}
 
-# imgId to objects
-imgId2objects = {}
-for annotation in coco_obj_det_anno["annotation"]:
-    obj = {
-        "label": catId2catName[annotation["category_id"]],
-        "polygon": ,
-    }
-    imgId2objects annotation["image_id"]
+# imgId to cityscapes objects
+imgId2csObjects = {}
+for annotation in coco_obj_det_anno["annotations"]:
+    # 1 coco annotation to (maybe multiple) cityscapes polygon(s). (coco 에선 한 annotation 에 polygon 이 여러개잇을수잇음)
+    for oneCocoPolygon in annotation["segmentation"]:
+        csPolygon = [[x,y] for x,y in zip(oneCocoPolygon[0::2], oneCocoPolygon[1::2])]
+        csObject = {
+            "label": catId2catName[annotation["category_id"]],
+            "polygon": csPolygon,
+        }
+        if annotation["image_id"] not in imgId2csObjects:
+            imgId2csObjects[annotation["image_id"]] = [csObject]
+        else:
+            imgId2csObjects[annotation["image_id"]].append(csObject)
 
-
-# 위의 COCO object detection json파일을 deserialize 한것을 coco_obj_det_anno 라고하면,
+# 한 이미지당 하나의 (cityscapes의)~~polygons.json 파일을 만듦.
 for imgDict in coco_obj_det_anno["images"]:
-    polygonsDict = {
+    cs_polygonsJson_dict = {
         "imgHeight": imgDict["width"],
         "imgWidth": imgDict["height"],
-        "objects":
+        "objects": imgId2csObjects[imgDict["id"]]
     }
-
-for annotation in coco_obj_det_anno["annotations"]:
-    annotation["image_id"]
-
-
-
-
+    # i. make json file with cs_polygonsJson_dict.
+    savePathJ = os.path.join(CITYSCAPES_POLYGONS_JSON_SAVEDIRPATH_J, \
+        os.path.splitext(imgDict["file_name"])[0] + '_polygons.json')
+    with open(savePathJ, 'w') as f:
+        json.dump(cs_polygonsJson_dict, f)
 
 
-# cityscapes 의 ~~polygons.json 형식은 아래와 같음 (한 이미지당 한 json).
-{
-    "imgHeight": 1024, 
-    "imgWidth": 2048, 
-    "objects": [
-        {
-            "label": "sky", 
-            "polygon": [
-                [
-                    704, 
-                    191
-                ], 
-                [
-                    1044, 
-                    404
-                ], 
-                [
-                    1293, 
-                    128
-                ], 
-                [
-                    1320, 
-                    0
-                ], 
-                [
-                    678, 
-                    0
-                ], 
-                [
-                    701, 
-                    190
-                ]
-            ]
-        }, 
-        {
-            "label": "road", 
-            "polygon": [
-                [
-                    1145, 
-                    391
-                ], 
-                [
-                    13, 
-                    467
-                ], 
-                [
-                    0, 
-                    466
-                ], 
-                [
-                    0, 
-                    1024
-                ], 
-                [
-                    2048, 
-                    1024
-                ], 
-                [
-                    2048, 
-                    446
-                ]
-            ]
-        }, 
+print(f'j) finished converting.\n\
+  {len(coco_obj_det_anno["images"])} images were converted from [COCO obj det format] to [cityscapes ~~polygons.json]')
+
+
+
+
+# # cityscapes 의 ~~polygons.json 형식은 아래와 같음 (한 이미지당 한 json).
+# {
+#     "imgHeight": 1024, 
+#     "imgWidth": 2048, 
+#     "objects": [
+#         {
+#             "label": "sky", 
+#             "polygon": [
+#                 [
+#                     704, 
+#                     191
+#                 ], 
+#                 [
+#                     1044, 
+#                     404
+#                 ], 
+#                 [
+#                     1293, 
+#                     128
+#                 ], 
+#                 [
+#                     1320, 
+#                     0
+#                 ], 
+#                 [
+#                     678, 
+#                     0
+#                 ], 
+#                 [
+#                     701, 
+#                     190
+#                 ]
+#             ]
+#         }, 
+#         {
+#             "label": "road", 
+#             "polygon": [
+#                 [
+#                     1145, 
+#                     391
+#                 ], 
+#                 [
+#                     13, 
+#                     467
+#                 ], 
+#                 [
+#                     0, 
+#                     466
+#                 ], 
+#                 [
+#                     0, 
+#                     1024
+#                 ], 
+#                 [
+#                     2048, 
+#                     1024
+#                 ], 
+#                 [
+#                     2048, 
+#                     446
+#                 ]
+#             ]
+#         }, 
 

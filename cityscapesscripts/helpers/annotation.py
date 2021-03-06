@@ -364,7 +364,7 @@ class Annotation:
         # the height of that image and thus of the label image
         self.imgHeight = 0
         # the list of objects
-        self.objects = []
+        self.objects = []  # i.21.3.6.22:42) 리스트기때문에 원소들의 순서 구분됨!
         # the camera calibration
         self.camera = None
         assert objType in CsObjectType.__dict__.values()
@@ -375,12 +375,28 @@ class Annotation:
 
     def fromJsonText(self, jsonText):
         jsonDict = json.loads(jsonText)
+
+        ##############################################################################################################
+        # i.21.3.6.22:46) 그림그려줄때 z-order 맞게해주기위해 지금 여기서 순서 잘 정렬해줌.
+        #  Z_ORDER_J: 맨처음그릴거(맨밑바닥) -> 맨나중에그릴거(맨위) 순서.
+        #  TODO: 지금 일단 걍 했는데, 연산 더 빠르게 하려면?
+        Z_ORDER_J = ['Rt_sinus', 'Lt_sinus', 'maxilla', 'mandible', 'Rt_canal', 'Lt_canal', 't_normal', 't_tx', 'impl']
+        z_ordered_objList = []
+        for i in Z_ORDER_J:
+            for obj in jsonDict['objects']:
+                if i == obj['label']:
+                    z_ordered_objList.append(obj)
+        # i. [:] 안붙여줘도 작동에 상관은 없을거임. 좌변의 리스트에 [:] 붙여주면 걍 in-place 효과. 
+        #  참고로 [:]를 우변의 리스트에 붙이면 shallow copy 인듯.
+        jsonDict['objects'][:] = z_ordered_objList 
+        ##############################################################################################################
+
         self.imgWidth = int(jsonDict['imgWidth'])
         self.imgHeight = int(jsonDict['imgHeight'])
         self.objects = []
         # load objects
         if self.objectType != CsObjectType.IGNORE2D:
-            # i.21.3.4.23:08) jsonDict 는 ~~polygons.json 에 해당하고, objIn 은 거기서의 한개의 옵젝. {'label': "person", 'polygon':[[12,22], [45,333], ...]} 이런식.
+            # i.21.3.4.23:08) jsonDict 는 ~~polygons.json 에 해당하고, objIn 은 거기서의 한개의 옵젝. {'label': "person", 'polygon':[[12,22], [45,333], ...]} 이런식.       
             for objId, objIn in enumerate(jsonDict['objects']):
                 if self.objectType == CsObjectType.POLY:
                     obj = CsPoly()
@@ -389,7 +405,7 @@ class Annotation:
                 elif self.objectType == CsObjectType.BBOX3D:
                     obj = CsBbox3d()
                 obj.fromJsonText(objIn, objId)
-                self.objects.append(obj)
+                self.objects.append(obj)  # i.21.3.6.22:42) Annotation.objects 는 리스트기때문에 원소들의 순서 구분됨! 이 순서를 잘 정해줘야 png파일 그림그려줄때 z-order를 맞게해줄수있음.
 
         # load ignores
         if 'ignore' in jsonDict.keys():

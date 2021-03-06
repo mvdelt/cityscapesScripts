@@ -107,7 +107,11 @@ def createInstanceImage(annotation, encoding):
         if labelTuple.hasInstances:
             nbInstances[labelTuple.name] = 0
 
-    # loop over all objects
+    # loop over all objects  
+    # i.21.3.6.22:38) annotation.objects 는 리스트기때문에 원소들의 순서가 구분됨. 
+    #  따라서 그 순서를 잘 정해주면, 지금 여기서 그 순서대로 그림을 그려주기때문에,
+    #  출력되는 png 파일에 원하는순서대로 그림을 그려줄수있음. 
+    #  (예를들어 A물체를 먼저그리고 그 위에 B물체를 그려야할경우 그 순서를 맞춰줘야한다는거지)
     for obj in annotation.objects:
         label   = obj.label
         polygon = obj.polygon
