@@ -57,7 +57,7 @@ def createLabelImage(annotation, encoding, outline=None):
     elif encoding == "trainIds":
         background = name2label['unlabeled'].trainId
     elif encoding == "color":
-        background = name2label['unlabeled'].color
+        background = name2label['unlabeled_Label'].color # i. 지금 칼라로 png 그려줘보려는데, 원래'unlabeled'라고돼잇는걸 내가'unlabeled_Label'로 바꿔줫기때매 이렇게해줌.
     else:
         print("Unknown encoding '{}'".format(encoding))
         return None

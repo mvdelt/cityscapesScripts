@@ -105,18 +105,19 @@ Label = namedtuple( 'Label' , [
 # i.21.3.6.23:52) 내가 새로 정해준 Label들. color 는 coco-annotator 에서내가정해준 색깔과 유사하게 해놔봣음.
 #  category 는 일단 대충 정해봣는데.. 이건 어케하든 상관없는거겟지?
 #  hasInstances 를 어케해주냐에 따라서 어떻게 달라지는거지..?????????
+#  참고로 hasInstances 가 True 면 
 labels = [
     #       name                     id    trainId   category            catId     hasInstances   ignoreInEval   color
     Label(  'unlabeled_Label'      ,  0 ,        0 , 'voidJ'           , 0       , False        , False        , (  0,  0,  0) ),
-    Label(  'Rt_sinus_Label'       ,  1 ,        1 , 'sinusJ'          , 1       , False        , False        , (  0,  0,255) ),
-    Label(  'Lt_sinus_Label'       ,  2 ,        2 , 'sinusJ'          , 1       , False        , False        , (255,  0,  0) ),
-    Label(  'maxilla_Label'        ,  3 ,        3 , 'boneJ'           , 2       , False        , False        , (162,156,255) ),
-    Label(  'mandible_Label'       ,  4 ,        4 , 'boneJ'           , 2       , False        , False        , (185,181,247) ),
-    Label(  'Rt_canal_Label'       ,  5 ,        5 , 'canalJ'          , 3       , False        , False        , ( 76, 68,212) ),
-    Label(  'Lt_canal_Label'       ,  6 ,        6 , 'canalJ'          , 3       , False        , False        , (194, 37,144) ),
-    Label(  't_normal_Label'       ,  7 ,        7 , 'toothJ'          , 4       , True         , False        , ( 66,158, 27) ),
-    Label(  't_tx_Label'           ,  8 ,        8 , 'toothJ'          , 4       , True         , False        , ( 88,214, 34) ),
-    Label(  'impl_Label'           ,  9 ,        9 , 'toothJ'          , 4       , True         , False        , (116,255, 56) ),
+    Label(  'Rt_sinus'             ,  1 ,        1 , 'sinusJ'          , 1       , False        , False        , (  0,  0,255) ),
+    Label(  'Lt_sinus'             ,  2 ,        2 , 'sinusJ'          , 1       , False        , False        , (255,  0,  0) ),
+    Label(  'maxilla'              ,  3 ,        3 , 'boneJ'           , 2       , False        , False        , (162,156,255) ),
+    Label(  'mandible'             ,  4 ,        4 , 'boneJ'           , 2       , False        , False        , (185,181,247) ),
+    Label(  'Rt_canal'             ,  5 ,        5 , 'canalJ'          , 3       , False        , False        , ( 76, 68,212) ),
+    Label(  'Lt_canal'             ,  6 ,        6 , 'canalJ'          , 3       , False        , False        , (194, 37,144) ),
+    Label(  't_normal'             ,  7 ,        7 , 'toothJ'          , 4       , True         , False        , ( 66,158, 27) ),
+    Label(  't_tx'                 ,  8 ,        8 , 'toothJ'          , 4       , True         , False        , ( 88,214, 34) ),
+    Label(  'impl'                 ,  9 ,        9 , 'toothJ'          , 4       , True         , False        , (116,255, 56) ),
 ]
 
 
@@ -128,6 +129,9 @@ labels = [
 
 # name to label object
 name2label      = { label.name    : label for label in labels           }
+print(f'j) name2label has been made!!!!!!')
+# print(f'j) name2label: {name2label}')
+
 # id to label object
 id2label        = { label.id      : label for label in labels           }
 # trainId to label object

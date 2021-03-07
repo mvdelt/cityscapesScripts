@@ -44,6 +44,7 @@ from PIL import ImageDraw
 from cityscapesscripts.helpers.annotation import Annotation
 from cityscapesscripts.helpers.labels     import labels, name2label
 
+
 # Print the information
 def printHelp():
     print('{} [OPTIONS] inputJson outputImg'.format(os.path.basename(sys.argv[0])))
@@ -87,7 +88,7 @@ def createInstanceImage(annotation, encoding):
 
     # the background
     if encoding == "ids":
-        backgroundId = name2label['unlabeled'].id
+        backgroundId = name2label['unlabeled_Label'].id  # i.21.3.7.13:36) 내가 labels.py 에서 'unlabeled_Label' 이라고 바꿔줬었기때매 여기도 이렇게 해줌.
     elif encoding == "trainIds":
         backgroundId = name2label['unlabeled'].trainId
     else:

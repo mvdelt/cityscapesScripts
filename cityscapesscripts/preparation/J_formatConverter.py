@@ -74,8 +74,8 @@ for annotation in coco_obj_det_anno["annotations"]:
 # 한 이미지당 하나의 (cityscapes의)~~polygons.json 파일을 만듦.
 for imgDict in coco_obj_det_anno["images"]:
     cs_polygonsJson_dict = {
-        "imgHeight": imgDict["width"],
-        "imgWidth": imgDict["height"],
+        "imgHeight": imgDict["height"],
+        "imgWidth": imgDict["width"],
         "objects": imgId2csObjects[imgDict["id"]]
     }
     # i. make json file with cs_polygonsJson_dict.
