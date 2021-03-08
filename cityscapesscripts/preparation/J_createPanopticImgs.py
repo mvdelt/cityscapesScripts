@@ -72,10 +72,10 @@ def convert2panoptic(cityscapesPath=None, outputFolder=None, useTrainId=False, s
 
         trainIfSuffix = "_trainId" if useTrainId else ""
         # outputBaseFile = "cityscapes_panoptic_{}{}".format(setName, trainIfSuffix)
-        outputBaseFile = "J_cocoformat_panoptic_{}{}".format(setName, trainIfSuffix)
-        outFile = os.path.join(outputFolder, "{}.json".format(outputBaseFile))
-        print("Json file with the annotations in panoptic format will be saved in {}".format(outFile))
-        panopticFolder = os.path.join(outputFolder, outputBaseFile)
+        outputBaseNameJ = "J_cocoformat_panoptic_{}{}".format(setName, trainIfSuffix)
+        outAnnoJsonPathJ = os.path.join(outputFolder, "{}.json".format(outputBaseNameJ))
+        print("Json file with the annotations in panoptic format will be saved in {}".format(outAnnoJsonPathJ))
+        panopticFolder = os.path.join(outputFolder, outputBaseNameJ)
         if not os.path.isdir(panopticFolder):
             print("Creating folder {} for panoptic segmentation PNGs".format(panopticFolder))
             os.mkdir(panopticFolder)
@@ -85,29 +85,32 @@ def convert2panoptic(cityscapesPath=None, outputFolder=None, useTrainId=False, s
         annotations = [] # i. ######################################
         for progress, f in enumerate(files):
 
-            originalFormat = np.array(Image.open(f))
+            originalFormat = np.array(Image.open(f))  # i. f 는 path/to/~~instanceIds.png
 
             fileName = os.path.basename(f)
-
-            # fileName ex: imp2_0_instanceIds.png, imp4_120_instanceIds.png   (imp{A}_{00B}_instanceIds.png 이런식. A:2,3,4, B:0~3자리수)
-            implDatasetGroupNumJ = fileName[3] # "2", "4"
-            implSubNumJ = fileName[len("impX_"):-len("_instanceIds.png")] # "0", "120"
-            imageIdJ = implDatasetGroupNumJ + (3-len(implSubNumJ))*"0" + implSubNumJ # "2000", "4120"   (A00B 이런식)
-
 
             # imageId = fileName.replace("_gtFine_instanceIds.png", "") # i. 변경필요 ###########
             # inputFileName = fileName.replace("_instanceIds.png", "_leftImg8bit.png") # i. 변경필요 ###########
             # outputFileName = fileName.replace("_instanceIds.png", "_panoptic.png")
 
-            inputFileNameJ = fileName.replace("_instanceIds.png", ".jpg")
 
-            outputFileNameJ = fileName.replace("_instanceIds.png", "_panopticAnno.png")
+
+            # fileName ex: imp2_0_instanceIds.png, imp4_120_instanceIds.png   (imp{A}_{00B}_instanceIds.png 이런식. A:2,3,4, B:0~3자리수)
+            # i.21.3.8.오후쯤) ->여기서 A00B 이런식으로 이미지id 만들어줄거임. B가 두자리면 A0bb, 세자리면 Abbb 이런식으로.
+            implDatasetGroupNumJ = fileName[3] # "2", "4"
+            implSubNumJ = fileName[len("impX_"):-len("_instanceIds.png")] # "0", "120"
+
+            imageIdJ = implDatasetGroupNumJ + (3-len(implSubNumJ))*"0" + implSubNumJ # "2000", "4120"   (A00B 이런식)
+            inputImgFileNameJ = fileName.replace("_instanceIds.png", ".jpg")
+            outAnnoPngNameJ = fileName.replace("_instanceIds.png", "_panopticAnno.png")
+
+
 
             # image entry, id for image is its filename without extension
-            images.append({"id": imageId,
+            images.append({"id": imageIdJ,
                            "width": int(originalFormat.shape[1]),
                            "height": int(originalFormat.shape[0]),
-                           "file_name": inputFileName})
+                           "file_name": inputImgFileNameJ})
 
             pan_format = np.zeros(
                 (originalFormat.shape[0], originalFormat.shape[1], 3), dtype=np.uint8
@@ -132,10 +135,20 @@ def convert2panoptic(cityscapesPath=None, outputFolder=None, useTrainId=False, s
                 if not labelInfo.hasInstances:
                     isCrowd = 0
 
-                mask = originalFormat == segmentId # i. 넘파이 문법 복습필요.
-                color = [segmentId % 256, segmentId // 256, segmentId // 256 // 256]
+                mask = originalFormat == segmentId # i. TODO 넘파이 문법 복습필요.
+
+                # color = [segmentId % 256, segmentId // 256, segmentId // 256 // 256] 
+                # i.21.3.8.22:28)->요게 기존 코드. 잘못됐음. cityscapes 데이터셋은 클래스가 35갠가 뿐이라 이렇게해도 문제되진 않지만, 
+                #  만약 클래스갯수가 65개고 인스턴스갯수가 엄청많다거나, 클래스갯수가 66개 이상이된다거나 하면 문제됨. 현 cityscapes 의 id정해주는방식이라면.
+                #  (참고1: 256^2=65536) 
+                #  (참고2: COCO panoptic 형식에서 id=R+G*256+B*256^2, RGB는 어노png파일의 각 픽셀의 값.)
+                color = [segmentId%256, segmentId%(256*256)//256, segmentId%(256*256*256)//(256*256)] 
+                # i.21.3.8.22:28)->요게 내가 수정한거. 세번쨋놈은 그냥 segmentId//(256*256) 
+                # 또는 segmentId//256/256 으로 해도 되지만(id가 256^3보다 작을것이라서), 일반화를 위해 저렇게 적었음. 규칙성도 눈에잘보이고.
+
                 pan_format[mask] = color 
-                # i. ->pan_format 은 HxWx3일거고 mask 는 아마 HxW일텐데(확인필요). 넘파이 문법 복습필요. 그리고 color 는 list 일텐데, 일케해도되나?
+                # i. TODO ->pan_format 은 HxWx3일거고 mask 는 아마 HxW일텐데(확인필요). 넘파이 문법 복습필요. 
+                #  그리고 color 는 list 일텐데, 일케해도되나?
 
                 area = np.sum(mask) # segment area computation
 
@@ -156,20 +169,20 @@ def convert2panoptic(cityscapesPath=None, outputFolder=None, useTrainId=False, s
                                  "bbox": bbox,
                                  "iscrowd": isCrowd})
 
-            annotations.append({'image_id': imageId,
-                                'file_name': outputFileName,
+            annotations.append({'image_id': imageIdJ,
+                                'file_name': outAnnoPngNameJ,
                                 "segments_info": segmInfo})
 
-            Image.fromarray(pan_format).save(os.path.join(panopticFolder, outputFileName))
+            Image.fromarray(pan_format).save(os.path.join(panopticFolder, outAnnoPngNameJ))
 
             print("\rProgress: {:>3.2f} %".format((progress + 1) * 100 / len(files)), end=' ')
             sys.stdout.flush()
 
-        print("\nSaving the json file {}".format(outFile))
+        print("\nSaving the json file {}".format(outAnnoJsonPathJ))
         d = {'images': images,
              'annotations': annotations,
              'categories': categories}
-        with open(outFile, 'w') as f:
+        with open(outAnnoJsonPathJ, 'w') as f:
             json.dump(d, f, sort_keys=True, indent=4)
 
 
