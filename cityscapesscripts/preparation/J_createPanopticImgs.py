@@ -88,9 +88,21 @@ def convert2panoptic(cityscapesPath=None, outputFolder=None, useTrainId=False, s
             originalFormat = np.array(Image.open(f))
 
             fileName = os.path.basename(f)
-            imageId = fileName.replace("_gtFine_instanceIds.png", "") # i. 변경필요 ###########
-            inputFileName = fileName.replace("_instanceIds.png", "_leftImg8bit.png") # i. 변경필요 ###########
-            outputFileName = fileName.replace("_instanceIds.png", "_panoptic.png")
+
+            # fileName ex: imp2_0_instanceIds.png, imp4_120_instanceIds.png   (imp{A}_{00B}_instanceIds.png 이런식. A:2,3,4, B:0~3자리수)
+            implDatasetGroupNumJ = fileName[3] # "2", "4"
+            implSubNumJ = fileName[len("impX_"):-len("_instanceIds.png")] # "0", "120"
+            imageIdJ = implDatasetGroupNumJ + (3-len(implSubNumJ))*"0" + implSubNumJ # "2000", "4120"   (A00B 이런식)
+
+
+            # imageId = fileName.replace("_gtFine_instanceIds.png", "") # i. 변경필요 ###########
+            # inputFileName = fileName.replace("_instanceIds.png", "_leftImg8bit.png") # i. 변경필요 ###########
+            # outputFileName = fileName.replace("_instanceIds.png", "_panoptic.png")
+
+            inputFileNameJ = fileName.replace("_instanceIds.png", ".jpg")
+
+            outputFileNameJ = fileName.replace("_instanceIds.png", "_panopticAnno.png")
+
             # image entry, id for image is its filename without extension
             images.append({"id": imageId,
                            "width": int(originalFormat.shape[1]),
