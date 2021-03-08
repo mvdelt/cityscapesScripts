@@ -65,7 +65,7 @@ def convert2panoptic(cityscapesPath=None, outputFolder=None, useTrainId=False, s
         # quit if we did not find anything
         if not files:
             printError(
-                "Did not find any files for {} set using matching pattern {}. Please consult the README.".format(setName, searchFine)
+                "j) Did not find any files for {} set using matching pattern {} !!!".format(setName, searchFine)
             )
         # a bit verbose
         print("Converting {} annotation files for {} set.".format(len(files), setName))
