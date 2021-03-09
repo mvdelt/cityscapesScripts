@@ -65,7 +65,7 @@ from PIL import Image
 
 
 ###########################################################################################################################################################
-# i.21.3.9.11:00) J_createPanopticImgs.py 실행결과 체크해보는중.
+# i.21.3.9.11:00) J_createPanopticImgs.py 실행결과 체크해보는중. ->이상없음.
 
 f = r"C:\Users\starriet\Downloads\convertTestJ\J_cocoformat_panoptic_train\imp2_1_panopticAnno.png"
 originalFormat = np.array(Image.open(f))
