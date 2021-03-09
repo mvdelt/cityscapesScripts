@@ -37,6 +37,8 @@ CS_ROOTDIRPATH_J = r"C:\Users\starriet\Downloads\convertTestJ"
 
 # The main method
 def convert2panoptic(cityscapesPath=None, outputFolder=None, useTrainId=False, setNames=["val", "train", "test"]):
+    print(f'j) <inputs shoud be> cityscapesPath:None, outputFolder:None, useTrainId:False, setNames:["train"]')
+    print(f'j)   <actual inputs> cityscapesPath:{cityscapesPath}, outputFolder:{outputFolder}, useTrainId:{useTrainId}, setNames:{setNames}')
     # Where to look for Cityscapes
     if cityscapesPath is None:
         cityscapesPath = CS_ROOTDIRPATH_J
@@ -85,7 +87,8 @@ def convert2panoptic(cityscapesPath=None, outputFolder=None, useTrainId=False, s
         annotations = [] # i. ######################################
         for progress, f in enumerate(files):
 
-            originalFormat = np.array(Image.open(f))  # i. f 는 path/to/~~instanceIds.png
+            cs_annoPng_arrJ = np.array(Image.open(f))  # i. f 는 path/to/~~instanceIds.png
+            print(f'j) cs_annoPng_arrJ.shape: {cs_annoPng_arrJ.shape}') # i. ex: (976, 1976)
 
             fileName = os.path.basename(f)
 
@@ -108,47 +111,51 @@ def convert2panoptic(cityscapesPath=None, outputFolder=None, useTrainId=False, s
 
             # image entry, id for image is its filename without extension
             images.append({"id": imageIdJ,
-                           "width": int(originalFormat.shape[1]),
-                           "height": int(originalFormat.shape[0]),
+                           "width": int(cs_annoPng_arrJ.shape[1]),
+                           "height": int(cs_annoPng_arrJ.shape[0]),
                            "file_name": inputImgFileNameJ})
 
-            pan_format = np.zeros(
-                (originalFormat.shape[0], originalFormat.shape[1], 3), dtype=np.uint8
+            coco_annoPng_arrJ = np.zeros(
+                (cs_annoPng_arrJ.shape[0], cs_annoPng_arrJ.shape[1], 3), dtype=np.uint8  # i.21.3.9.8:04) Unsigned integer 0 to 255
             )
+            print(f'j) coco_annoPng_arrJ.shape: {coco_annoPng_arrJ.shape}') # i. ex: (976, 1976, 3)
 
-            segmentIds = np.unique(originalFormat)
+            segmentIds = np.unique(cs_annoPng_arrJ)  # i. ex: [   0    1    2    3    4    5    6 7000 7001 7002 7003 7004 7005 7006 8000 8001 8002 8003 9000] 
+            print(f'j) segmentIds = np.unique(cs_annoPng_arrJ): {np.unique(cs_annoPng_arrJ)}')
             segmInfo = []
             # i.21.3.8.00:25) 여기서 segmentIds 를 z-order에 맞게 정렬해줘야겠네.
-            #  ->아니지. 지금 originalFormat(~~instanceIds.png 를 읽어들인거)은 이미 내가정해준 zorder대로 그려진상태니까
+            #  ->아니지. 지금 cs_annoPng_arrJ(~~instanceIds.png 를 읽어들인거)은 이미 내가정해준 zorder대로 그려진상태니까
             #    이제는 zorder 상관할필요가 없겠네. 그냥 2차원 이미지일 뿐이니까.
             for segmentId in segmentIds:
-                if segmentId < 1000:
+                if segmentId < 1000:  # i. id값이 1000미만이면, stuff(COCO형식에서 stuff는 iscrowd의미없고 기본적으로 0임)이거나, iscrowd=1인 thing임. 참고로 iscrowd 는 COCO형식에 나오는 값./21.3.9.9:38.
                     semanticId = segmentId
                     isCrowd = 1
-                else:
-                    semanticId = segmentId // 1000
+                else: # i. id값이 1000이상이면, iscrowd=0 인 thing임./21.3.9.9:38.
+                    semanticId = segmentId // 1000 
                     isCrowd = 0
                 labelInfo = id2label[semanticId]
                 categoryId = labelInfo.trainId if useTrainId else labelInfo.id
                 if labelInfo.ignoreInEval:
                     continue
-                if not labelInfo.hasInstances:
+                if not labelInfo.hasInstances: # i. stuff면, iscrowd 의미없고 기본적으로 0임.(COCO형식 참고하삼)/21.3.9.9:45.
                     isCrowd = 0
 
-                mask = originalFormat == segmentId # i. TODO 넘파이 문법 복습필요.
+                mask = cs_annoPng_arrJ == segmentId 
+                # print(f'j) mask.shape: {mask.shape}') # i. ex: (976, 1976)
 
                 # color = [segmentId % 256, segmentId // 256, segmentId // 256 // 256] 
                 # i.21.3.8.22:28)->요게 기존 코드. 잘못됐음. cityscapes 데이터셋은 클래스가 35갠가 뿐이라 이렇게해도 문제되진 않지만, 
                 #  만약 클래스갯수가 65개고 인스턴스갯수가 엄청많다거나, 클래스갯수가 66개 이상이된다거나 하면 문제됨. 현 cityscapes 의 id정해주는방식이라면.
+                #  즉, 예를들어 id값이 65900(클래스번호65, 해당클래스의 901번째 인스턴스)라든가, id값이 66000(클래스번호66, 해당클래스의 0번째인스턴스)라든가 이럴경우 문제됨.
                 #  (참고1: 256^2=65536) 
                 #  (참고2: COCO panoptic 형식에서 id=R+G*256+B*256^2, RGB는 어노png파일의 각 픽셀의 값.)
                 color = [segmentId%256, segmentId%(256*256)//256, segmentId%(256*256*256)//(256*256)] 
+                print(f'j) id -> color(RGB): {color}')
                 # i.21.3.8.22:28)->요게 내가 수정한거. 세번쨋놈은 그냥 segmentId//(256*256) 
                 # 또는 segmentId//256/256 으로 해도 되지만(id가 256^3보다 작을것이라서), 일반화를 위해 저렇게 적었음. 규칙성도 눈에잘보이고.
 
-                pan_format[mask] = color 
-                # i. TODO ->pan_format 은 HxWx3일거고 mask 는 아마 HxW일텐데(확인필요). 넘파이 문법 복습필요. 
-                #  그리고 color 는 list 일텐데, 일케해도되나?
+                coco_annoPng_arrJ[mask] = color # i. ->coco_annoPng_arrJ 은 HxWx3, mask 는 HxW. 그래도 상관없지.
+                # ->color 는 list 지만, 일케해줘도 상관x. 넘파이어레이로 됨.
 
                 area = np.sum(mask) # segment area computation
 
@@ -173,7 +180,7 @@ def convert2panoptic(cityscapesPath=None, outputFolder=None, useTrainId=False, s
                                 'file_name': outAnnoPngNameJ,
                                 "segments_info": segmInfo})
 
-            Image.fromarray(pan_format).save(os.path.join(panopticFolder, outAnnoPngNameJ))
+            Image.fromarray(coco_annoPng_arrJ).save(os.path.join(panopticFolder, outAnnoPngNameJ))
 
             print("\rProgress: {:>3.2f} %".format((progress + 1) * 100 / len(files)), end=' ')
             sys.stdout.flush()
@@ -203,7 +210,8 @@ def main():
                         dest="setNames",
                         help="set names to which apply the function to",
                         nargs='+',
-                        default=["val", "train", "test"],
+                        # default=["val", "train", "test"],
+                        default=["train"], # i. 일단 train 폴더만 만들어줘놔봤음./21.3.9.10:11
                         type=str)
     args = parser.parse_args()
 

@@ -64,9 +64,9 @@ def createLabelImage(annotation, encoding, outline=None):
 
     # this is the image that we want to create
     if encoding == "color":
-        labelImg = Image.new("RGBA", size, background)
+        labelImg = Image.new("RGBA", size, background) # i. RGBA (4x8-bit pixels, true color with transparency mask)
     else:
-        labelImg = Image.new("L", size, background)
+        labelImg = Image.new("L", size, background) # i. L (8-bit pixels, black and white)
 
     # a drawer to draw into the image
     drawer = ImageDraw.Draw( labelImg )

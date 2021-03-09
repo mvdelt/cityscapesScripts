@@ -96,7 +96,7 @@ def createInstanceImage(annotation, encoding):
         return None
 
     # this is the image that we want to create
-    instanceImg = Image.new("I", size, backgroundId)
+    instanceImg = Image.new("I", size, backgroundId) # i. I (32-bit signed integer pixels)
 
     # a drawer to draw into the image
     drawer = ImageDraw.Draw( instanceImg )
@@ -125,7 +125,7 @@ def createInstanceImage(annotation, encoding):
         # try to remove the s and see if that works
         # also we know that this polygon describes a group
         isGroup = False
-        if ( not label in name2label ) and label.endswith('group'):
+        if ( not label in name2label ) and label.endswith('group'):  # i. cityscapes 데이터셋에선 클래스명이 'group'으로 끝나면 뭐 그룹으로 봐주도록 하나봄. (예: polegroup) 근데 labels.py 에는 그런 클래스명이 polegroup 밖에 없네;
             label = label[:-len('group')]
             isGroup = True
 
