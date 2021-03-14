@@ -51,10 +51,16 @@ from json2instanceImg import json2instanceImg
 
 
 
-MYROOTDIRPATH_J = r"C:\Users\starriet\Downloads\panopticSeg_dentPanoJ"
+# MYROOTDIRPATH_J = r"C:\Users\starriet\Downloads\panopticSeg_dentPanoJ"
+# i.21.3.14.22:44) 코랩에서(구글드라이브연동해서)돌려줄거기때매, 구글드라이브상에서의 경로로 해줌.
+#  뭐 물론 내로컬컴에서 돌려준뒤에 구글드라이브에 올려도 되긴하지.
+#  TODO: 인풋아규먼트로 루트경로 입력할수있게 바꾸기.
+MYROOTDIRPATH_J = "/content/datasetsJ/panopticSeg_dentPanoJ"
 # i. 21.3.10.21:03) 디렉토리구조 바꿔서, train 폴더 새로만들고 거기에 넣어줫기때매
 #  중간에 "*" 하나 추가했음. 현재는 train 폴더만 있지만 추후 val 폴더도 만들어줄예정.
-forSearchAllPolygonsJson = os.path.join(MYROOTDIRPATH_J, "*", "*_polygons.json") 
+# i. 21.3.14.22:57) panopticSeg_dentPanoJ\gt\train\imp2_1_polygons.json 이런식으로 경로 바뀐거 
+#  반영 안해줬었네. 수정해줬음.
+forSearchAllPolygonsJson = os.path.join(MYROOTDIRPATH_J, "gt", "*", "*_polygons.json") 
 polygonsjson_path_list = glob.glob(forSearchAllPolygonsJson)
 print(f'j) ~~polygons.json path list: {polygonsjson_path_list}')
 print(f'j) type polygonsjson_path_list: {type(polygonsjson_path_list)}')

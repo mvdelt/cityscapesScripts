@@ -43,7 +43,9 @@ from cityscapesscripts.helpers.labels import id2label, labels
 
 
 
-CS_ROOTDIRPATH_J = r"C:\Users\starriet\Downloads\panopticSeg_dentPanoJ"
+# CS_ROOTDIRPATH_J = r"C:\Users\starriet\Downloads\panopticSeg_dentPanoJ"
+# i.21.3.14.22:51) 코랩에서돌려주기위해 구글드라이브상에서의 경로로 바꿔줬음. 물론 내 로컬컴에서 돌려서 파일들 생성한뒤에 드라이브에 올려도 되긴 하지.
+CS_ROOTDIRPATH_J = "/content/datasetsJ/panopticSeg_dentPanoJ" 
 
 
 # The main method
