@@ -1,4 +1,7 @@
 
+
+########################################################################################################################
+#
 # i. 21.3.5.19:56) 
 #  요약: COCO object detection 형식 -> cityscapes 의 ~~polygons.json 의 형식 으로 형식바꿔주는 코드. 
 #  어떤 특정 어노테이션툴에서, 세그멘테이션 어노테이션한걸
@@ -8,6 +11,8 @@
 #  원하는형식의 어노테이션png파일들 생성가능하고(cityscapes 에서 어노테이션png 파일들 종류가 몇개 있지),
 #  createPanopticImgs.py 이용해서 ~~instanceIds.png 로부터
 #  COCO panoptic segmentation 어노테이션형식(json & png 둘다필요)으로 변환가능함!!
+#
+########################################################################################################################
 
 
 # # i. COCO object detection 형식.
@@ -45,13 +50,24 @@
 import json, os
 
 # i. 불러올 어노json파일 경로. "path/to/ coco obj det annotation json file for loading"
-COCO_OBJ_DET_ANNO_JSON_LOADPATH_J = r"C:\Users\starriet\Downloads\convertTestJ\panopticSegJ.json"
+# i.21.3.11.11:02) 지금은 from_cocoannotator_for_panopticSegJ.json 이런식으로 json파일명 바꿔줬음. 
+#  제대로 어노테이션 다수 해준뒤에 확실히 이름 정해서 위 경로 수정할것.
+# i.21.3.11.12:43) 기존의 convertTestJ 에서 panopticSeg_dentPanoJ 로 폴더명 바꿨음. 뭐 사실 요 json파일의 위치는 어디에있든 상관없지만 일단 여기에 두는걸로.
+COCO_OBJ_DET_ANNOJSON_LOADPATH_J = r"C:\Users\starriet\Downloads\panopticSeg_dentPanoJ\from_cocoannotator_for_panopticSegJ.json" 
+
 # i. 저장할 폴더의 경로. "path/to/ dir of cityscapes polygons.json file for saving"
-CITYSCAPES_POLYGONS_JSON_SAVEDIRPATH_J = r"C:\Users\starriet\Downloads\convertTestJ"
+# i.21.3.11.10:57) train폴더 만들어줘서 경로 수정함. 지금 일단 train 폴더만 해줫음. val 폴더도 만들어주면 거기에다가도 ~~polygons.json 들 저장해줘야함!
+# i.21.3.11.12:43) 기존의 convertTestJ 에서 panopticSeg_dentPanoJ 로 폴더명 바꿨고, 그안에 gt 및 inputOriPano 두가지 폴더 다시 만들어줬음.
+CITYSCAPES_POLYGONS_JSON_SAVEDIRPATH_J = r"C:\Users\starriet\Downloads\panopticSeg_dentPanoJ\gt\train" 
+
 
 # COCO object detection 형식의 어노json파일을 읽어들임.
-with open(COCO_OBJ_DET_ANNO_JSON_LOADPATH_J) as f:
-    coco_obj_det_anno = json.load(f)
+try:
+    with open(COCO_OBJ_DET_ANNOJSON_LOADPATH_J) as f:
+        coco_obj_det_anno = json.load(f)
+except FileNotFoundError:
+    print(f"j) file not found!!: {COCO_OBJ_DET_ANNOJSON_LOADPATH_J}")
+
 
 # catId to catName
 catId2catName = {cat["id"]: cat["name"] for cat in coco_obj_det_anno["categories"]}

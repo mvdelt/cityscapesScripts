@@ -30,7 +30,7 @@ from cityscapesscripts.preparation.json2labelImg import json2labelImg
     
 
 
-POLYGONSJSON_DIRPATH_J = r"C:\Users\starriet\Downloads\convertTestJ"
+POLYGONSJSON_DIRPATH_J = r"C:\Users\starriet\Downloads\panopticSeg_dentPanoJ"
 forSearchAllPolygonsJson = os.path.join(POLYGONSJSON_DIRPATH_J, "*_polygons.json")
 polygonsjson_path_list = glob.glob(forSearchAllPolygonsJson)
 print(f'j) ~~polygons.json path list: {polygonsjson_path_list}')

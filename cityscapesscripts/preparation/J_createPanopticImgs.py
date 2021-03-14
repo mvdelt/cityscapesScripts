@@ -1,6 +1,17 @@
 #!/usr/bin/env python3
 
+########################################################################################################################
+#
 # i.21.3.7.22:51) createPanopticImgs.py 를 내플젝에 맞게 수정한 파일.
+# i.21.3.11.11:25) 이 파일이 하는일 설명추가: 
+#  각 train, val 등의 폴더에 대해서, (여기서 '등'이라고 적은이유는 test폴더는 아직안만들어줘서.)
+#  ~~instanceIds.png 들로부터 COCO panoptic 형식(어노png들과 어노json) 을 내뱉음.
+#    이때 ~~instanceIds.png 의 '파일명' 도 정보의 일부로서 이용함!
+#  cityscapes 데이터셋 방식은, 파일명이 {이미지id}_gtFine_instanceIds.png 이런식이라서,
+#  파일명으로부터 이 어노png가 어떤 원 인풋이미지에 대한 어노정보인지 알수있음. 
+#    그리고 cityscapesscripts 의 labels.py 에 적어둔 정보들도 사용하고.
+#
+########################################################################################################################
 
 # Converts the *instanceIds.png annotations of the Cityscapes dataset
 # to COCO-style panoptic segmentation format (http://cocodataset.org/#format-data).
@@ -32,7 +43,7 @@ from cityscapesscripts.helpers.labels import id2label, labels
 
 
 
-CS_ROOTDIRPATH_J = r"C:\Users\starriet\Downloads\convertTestJ"
+CS_ROOTDIRPATH_J = r"C:\Users\starriet\Downloads\panopticSeg_dentPanoJ"
 
 
 # The main method
@@ -56,21 +67,22 @@ def convert2panoptic(cityscapesPath=None, outputFolder=None, useTrainId=False, s
                            'supercategory': label.category,
                            'isthing': 1 if label.hasInstances else 0})
 
+    # i. train, val 등의 폴더에 대해서.
     for setName in setNames:
         # how to search for all ground truth
-        searchFine   = os.path.join(cityscapesPath, setName, "*_instanceIds.png")
+        forSearchInstanceIdsPngJ   = os.path.join(cityscapesPath, setName, "*_instanceIds.png")
         # search files
-        filesFine = glob.glob(searchFine)
-        filesFine.sort()
+        instanceIdsPng_list = glob.glob(forSearchInstanceIdsPngJ)
+        instanceIdsPng_list.sort()
 
-        files = filesFine
+        files = instanceIdsPng_list
         # quit if we did not find anything
         if not files:
             printError(
-                "j) Did not find any files for {} set using matching pattern {} !!!".format(setName, searchFine)
+                "j) Did not find any files for {} set using matching pattern {} !!!".format(setName, forSearchInstanceIdsPngJ)
             )
         # a bit verbose
-        print("Converting {} annotation files for {} set.".format(len(files), setName))
+        print("j) Converting {} annotation files(~~instanceIds.png) for {} set.".format(len(files), setName))
 
         trainIfSuffix = "_trainId" if useTrainId else ""
         # outputBaseFile = "cityscapes_panoptic_{}{}".format(setName, trainIfSuffix)
@@ -100,6 +112,8 @@ def convert2panoptic(cityscapesPath=None, outputFolder=None, useTrainId=False, s
 
             # fileName ex: imp2_0_instanceIds.png, imp4_120_instanceIds.png   (imp{A}_{00B}_instanceIds.png 이런식. A:2,3,4, B:0~3자리수)
             # i.21.3.8.오후쯤) ->여기서 A00B 이런식으로 이미지id 만들어줄거임. B가 두자리면 A0bb, 세자리면 Abbb 이런식으로.
+            # i.21.3.10.19:37) TODO: 굳이이렇게할필요없음. 이미지id 는 그냥 문자열 숫자열 섞여있어도 상관없음.
+            #  그리고 Det2 의 데이터셋레지스터하는 코드 사용하려면.. 이미지id를 베이스네임?같은식으로 좀 맞춰줘야해서.. 암튼 이코드부분 수정필요.
             implDatasetGroupNumJ = fileName[3] # "2", "4"
             implSubNumJ = fileName[len("impX_"):-len("_instanceIds.png")] # "0", "120"
 
@@ -153,6 +167,10 @@ def convert2panoptic(cityscapesPath=None, outputFolder=None, useTrainId=False, s
                 print(f'j) id -> color(RGB): {color}')
                 # i.21.3.8.22:28)->요게 내가 수정한거. 세번쨋놈은 그냥 segmentId//(256*256) 
                 # 또는 segmentId//256/256 으로 해도 되지만(id가 256^3보다 작을것이라서), 일반화를 위해 저렇게 적었음. 규칙성도 눈에잘보이고.
+                #
+                # i.21.3.10.19:44) cocodataset깃헙보면 cocoapi 말고도 panopticapi 라고 있음. 
+                #  거기서  panopticapi.utils.id2rgb 함수가 바로 위의 변환이랑 내내 같은걸 해주고있음. (Det2 문서의 "pan_seg_file_name" 설명에 나오는 함수)
+                #  거깄는 id2rgb 함수는 2차원 id맵(numpy어레이)을 넣으면 RGB맵으로 변환해주고, 그냥 하나의 id값만 넣으면 [R,G,B] 리스트를 반환해줌.
 
                 coco_annoPng_arrJ[mask] = color # i. ->coco_annoPng_arrJ 은 HxWx3, mask 는 HxW. 그래도 상관없지.
                 # ->color 는 list 지만, 일케해줘도 상관x. 넘파이어레이로 됨.

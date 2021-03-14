@@ -65,28 +65,46 @@ from PIL import Image
 
 
 ###########################################################################################################################################################
-# i.21.3.9.11:00) J_createPanopticImgs.py 실행결과 체크해보는중. ->이상없음.
+# # i.21.3.9.11:00) J_createPanopticImgs.py 실행결과 체크해보는중. ->이상없음.
 
-f = r"C:\Users\starriet\Downloads\convertTestJ\J_cocoformat_panoptic_train\imp2_1_panopticAnno.png"
-originalFormat = np.array(Image.open(f))
-print(f'j) originalFormat.shape: {originalFormat.shape}')  # (976, 1976, 3)
+# i.21.3.11.12:43) 기존의 convertTestJ 에서 panopticSeg_dentPanoJ 로 폴더명 바꿨고, 그안에 gt 및 inputOriPano 두가지 폴더 다시 만들어줬음.
+#  따라서, 지금 요 경로들은 이제 적용안됨. 바꿔줘야함.
+# f = r"C:\Users\starriet\Downloads\convertTestJ\J_cocoformat_panoptic_train\imp2_1_panopticAnno.png"
+# originalFormat = np.array(Image.open(f))
+# print(f'j) originalFormat.shape: {originalFormat.shape}')  # (976, 1976, 3)
 
-# i. 다채널이라서, 쉐입 변경시켜준뒤에 np.unique 적용.
-oriFormat_reshaped = originalFormat.reshape((-1, originalFormat.shape[-1]))
-print(f'j) oriFormat_reshaped.shape: {oriFormat_reshaped.shape}')
+# # i. 다채널이라서, 쉐입 변경시켜준뒤에 np.unique 적용.
+# oriFormat_reshaped = originalFormat.reshape((-1, originalFormat.shape[-1]))
+# print(f'j) oriFormat_reshaped.shape: {oriFormat_reshaped.shape}')
 
-segmentIds = np.unique(oriFormat_reshaped, axis=0)
-print(f'j) segmentIds: {segmentIds}')
-print(f'j) segmentIds.shape: {segmentIds.shape}')
+# segmentIds = np.unique(oriFormat_reshaped, axis=0)
+# print(f'j) segmentIds: {segmentIds}')
+# print(f'j) segmentIds.shape: {segmentIds.shape}')
 
-for idRGB in segmentIds:
-    id = idRGB[0] + idRGB[1]*256 + idRGB[2]*(256^2)
-    print(f'j) id in number: {id}')
+# for idRGB in segmentIds:
+#     id = idRGB[0] + idRGB[1]*256 + idRGB[2]*(256^2)
+#     print(f'j) id in number: {id}')
 
-print('-------------------------')
+# print('-------------------------')
 
 ###########################################################################################################################################################
 
 
 
 
+###########################################################################################################################################################
+# i.21.3.10.21:28) ~~labelTrainIds.png 만들어준거 제대로 된건지 체크. (~~labelTrainIds.png 도 만들어줘야한다는걸 알게돼서, 만들어줬음.)
+#  -> 제대로만들어졌네.
+# i.21.3.11.12:43) 기존의 convertTestJ 에서 panopticSeg_dentPanoJ 로 폴더명 바꿨고, 그안에 gt 및 inputOriPano 두가지 폴더 다시 만들어줬음.
+#  따라서, 지금 요 경로들은 이제 적용안됨. 바꿔줘야함.
+f = r"C:\Users\starriet\Downloads\convertTestJ\train\imp2_1_labelTrainIds.png"
+originalFormat = np.array(Image.open(f))
+print(f'j) originalFormat.shape: {originalFormat.shape}') # (976, 1976)
+
+segmentIds = np.unique(originalFormat)
+print(f'j) segmentIds: {segmentIds}') # [0 1 2 3 4 5 6 7 8 9]  # i. <- 내가 만들어준 10개의 카테고리 (labels.py 에도 작성해둔) 잘 기록되어있는것을 알수있음.
+print(f'j) segmentIds.shape: {segmentIds.shape}') # (10,)
+
+print('-------------------------')
+
+###########################################################################################################################################################

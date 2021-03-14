@@ -26,7 +26,9 @@
 # import numpy as np
 # from PIL import Image
 
-# # f = r"C:\Users\starriet\Downloads\convertTestJ\train\imp2_1_color.png"
+# i.21.3.11.12:43) 기존의 convertTestJ 에서 panopticSeg_dentPanoJ 로 폴더명 바꿨고, 그안에 gt 및 inputOriPano 두가지 폴더 다시 만들어줬음.
+#  따라서, 지금 요 경로들은 이제 적용안됨. 바꿔줘야함.
+# # f = r"C:\Users\starriet\Downloads\convertTestJ\train\imp2_1_color.png"     
 # f = r"C:\Users\starriet\Downloads\convertTestJ\train\imp2_1_instanceIds.png"
 # cs_annoPng_arrJ = np.array(Image.open(f))  # i. f 는 path/to/~~instanceIds.png
 # print(f'j) cs_annoPng_arrJ.shape: {cs_annoPng_arrJ.shape}')

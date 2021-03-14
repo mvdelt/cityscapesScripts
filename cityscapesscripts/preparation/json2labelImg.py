@@ -55,9 +55,11 @@ def createLabelImage(annotation, encoding, outline=None):
     if encoding == "ids":
         background = name2label['unlabeled'].id
     elif encoding == "trainIds":
-        background = name2label['unlabeled'].trainId
+        # i. 21.3.10.21:24) 마찬가지로 unlabled 라고돼있던걸 unlabeld_Label 로, 내가정해준이름으로 바꿔줌 (~~labelTrainIds.png 를 만들어줘야된단걸 알게돼서, 만들어주려고).
+        background = name2label['unlabeled_Label'].trainId 
     elif encoding == "color":
-        background = name2label['unlabeled_Label'].color # i. 지금 칼라로 png 그려줘보려는데, 원래'unlabeled'라고돼잇는걸 내가'unlabeled_Label'로 바꿔줫기때매 이렇게해줌.
+        # i. 지금 칼라로 png 그려줘보려는데, 원래'unlabeled'라고돼잇는걸 내가'unlabeled_Label'로 바꿔줫기때매 이렇게해줌.
+        background = name2label['unlabeled_Label'].color 
     else:
         print("Unknown encoding '{}'".format(encoding))
         return None
@@ -117,7 +119,7 @@ def createLabelImage(annotation, encoding, outline=None):
 #     - "ids"      : classes are encoded using the regular label IDs
 #     - "trainIds" : classes are encoded using the training IDs
 #     - "color"    : classes are encoded using the corresponding colors
-def json2labelImg(inJson,outImg,encoding="ids"):
+def json2labelImg(inJson,outImg,encoding="ids"): # i. inJson: ~~polygons.json 경로, outImg: 만들어서저장해줄 ~~labelTrainIds.png 경로.
     annotation = Annotation()
     annotation.fromJsonFile(inJson)
     labelImg   = createLabelImage( annotation , encoding )
