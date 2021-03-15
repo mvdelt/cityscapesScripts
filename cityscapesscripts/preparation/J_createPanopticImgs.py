@@ -58,7 +58,7 @@ def convert2panoptic(cityscapesPath=None, outputFolder=None, useTrainId=False, s
         cityscapesPath = CS_ROOTDIRPATH_J
 
     if outputFolder is None:
-        outputFolder = cityscapesPath
+        outputFolder = os.path.join(CS_ROOTDIRPATH_J, "gt")
 
     categories = [] # i. ######################################
     for label in labels:
