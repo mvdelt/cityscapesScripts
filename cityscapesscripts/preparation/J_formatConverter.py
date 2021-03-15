@@ -59,14 +59,14 @@ import json, os
 #  제대로 어노테이션 다수 해준뒤에 확실히 이름 정해서 위 경로 수정할것.
 # i.21.3.11.12:43) 기존의 convertTestJ 에서 panopticSeg_dentPanoJ 로 폴더명 바꿨음. 뭐 사실 요 json파일의 위치는 어디에있든 상관없지만 일단 여기에 두는걸로.
 # COCOFORM_OBJ_DET_ANNOJSON_LOADPATH_J = r"C:\Users\starriet\Downloads\panopticSeg_dentPanoJ\from_cocoannotator_for_panopticSegJ.json" 
-# i.21.3.14.23:48) 구글드라이브상의 경로로 변경.
+# i.21.3.14.23:48) 코랩컴에서의 경로로 변경.
 COCOFORM_OBJ_DET_ANNOJSON_LOADPATH_J = "/content/datasetsJ/panopticSeg_dentPanoJ/from_cocoannotator_for_panopticSegJ.json"
 
 
 # i. 저장할 폴더의 경로. "path/to/ dir of cityscapes formatted ~~polygons.json file for saving"
 # i.21.3.11.10:57) train폴더 만들어줘서 경로 수정함. 지금 일단 train 폴더만 해줫음. val 폴더도 만들어주면 거기에다가도 ~~polygons.json 들 저장해줘야함!
 # i.21.3.11.12:43) 기존의 convertTestJ 에서 panopticSeg_dentPanoJ 로 폴더명 바꿨고, 그안에 gt 및 inputOriPano 두가지 폴더 다시 만들어줬음.
-# i.21.3.14.23:48) 구글드라이브상의 경로로 변경.
+# i.21.3.14.23:48) 코랩컴에서의 경로로 변경.
 #  TODO: 지금 train 폴더에 대해서만 하드코드해놧는데, train 뿐 아니라 val (또는 나아가서 test) 에 대해서도 해줄것.
 CITYSCAPESFORM_POLYGONS_JSON_SAVEDIRPATH_J = "/content/datasetsJ/panopticSeg_dentPanoJ/gt/train" 
 

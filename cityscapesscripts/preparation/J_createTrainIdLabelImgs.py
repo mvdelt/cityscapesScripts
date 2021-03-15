@@ -73,7 +73,7 @@ def main():
     # i.21.3.11.12:45) 기존의 convertTestJ 폴더에서 panopticSeg_dentPanoJ 로 폴더명 바꿨고, 그안에 gt 및 inputOriPano 이렇게 두개 폴더 다시 만들어줬음.
     #  따라서 ~~polygons.json 경로 바꼈음. 바뀐 ~~polygons.json 경로 ex: panopticSeg_dentPanoJ\gt\train\imp2_1_polygons.json
     # MYROOTDIRPATH_J = r"C:\Users\starriet\Downloads\panopticSeg_dentPanoJ" # ~~polygons.json 경로 ex: convertTestJ\train\imp2_1_polygons.json  # <-요건 기존경로.
-    # i.21.3.14.22:41) 내 구글드라이브에 커스텀데이터 올려준 경로 반영해서 수정.
+    # i.21.3.14.22:41) 코랩컴에서의 경로로 수정. 내 구글드라이브에 커스텀데이터 올려놓고, 코랩컴에서 구글드라이브의 압축파일을 (코랩컴의 디렉토리에다가)압축풀어서 사용할거니까.
     #  즉, 구글코랩에서 구글드라이브 연동해서 돌리는걸 가정한것임. 뭐 사실상 코랩에서만 할테니까 일단은.
     MYROOTDIRPATH_J = "/content/datasetsJ/panopticSeg_dentPanoJ"
     

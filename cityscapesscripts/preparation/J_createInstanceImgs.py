@@ -52,8 +52,8 @@ from json2instanceImg import json2instanceImg
 
 
 # MYROOTDIRPATH_J = r"C:\Users\starriet\Downloads\panopticSeg_dentPanoJ"
-# i.21.3.14.22:44) 코랩에서(구글드라이브연동해서)돌려줄거기때매, 구글드라이브상에서의 경로로 해줌.
-#  뭐 물론 내로컬컴에서 돌려준뒤에 구글드라이브에 올려도 되긴하지.
+# i.21.3.14.22:44) 코랩에서(구글드라이브연동해서)돌려줄거기때매, 코랩컴에서의 경로로 해줌.
+#  뭐 물론 내로컬컴에서 돌려준뒤에 구글드라이브에 올려(서 코랩컴에다 복사or압축풀어)도 되긴하지.
 #  TODO: 인풋아규먼트로 루트경로 입력할수있게 바꾸기.
 MYROOTDIRPATH_J = "/content/datasetsJ/panopticSeg_dentPanoJ"
 # i. 21.3.10.21:03) 디렉토리구조 바꿔서, train 폴더 새로만들고 거기에 넣어줫기때매

@@ -30,9 +30,11 @@ from cityscapesscripts.preparation.json2labelImg import json2labelImg
     
 
 
-# i.21.3.14.22:48) 지금 다른파일들의 경로는 내로컬컴에서의 경로로 돼있던걸 구글드라이브에서의 경로로 바꿔주고있는데(이제 코랩에서 돌려볼거라), 
+# i.21.3.14.22:48) 지금 다른파일들의 경로는 내로컬컴에서의 경로로 돼있던걸 코랩컴에서의 경로로 바꿔주고있는데(이제 코랩에서 돌려볼거라), 
 #  지금이파일은 그냥 시각화해서 체크만해볼목적으로 만들었던거라서 코랩에서 돌릴일 없을듯해서 경로는 걍 그대로(내로컬컴에서의 경로) 둠.
-MYROOTDIRPATH_J = r"C:\Users\starriet\Downloads\panopticSeg_dentPanoJ" 
+# MYROOTDIRPATH_J = r"C:\Users\starriet\Downloads\panopticSeg_dentPanoJ" 
+# i.21.3.15.10:26) 걍 코랩컴에서의 경로로.
+MYROOTDIRPATH_J = "/content/datasetsJ/panopticSeg_dentPanoJ"
 # i. 21.3.14.22:57) ~~polygons.json 경로 ex: ~~\panopticSeg_dentPanoJ\gt\train\imp2_1_polygons.json
 forSearchAllPolygonsJson = os.path.join(MYROOTDIRPATH_J, "gt", "*", "*_polygons.json")
 polygonsjson_path_list = glob.glob(forSearchAllPolygonsJson)
