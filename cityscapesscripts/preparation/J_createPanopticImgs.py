@@ -73,7 +73,7 @@ def convert2panoptic(cityscapesPath=None, outputFolder=None, useTrainId=False, s
     # i. train, val 등의 폴더에 대해서.
     for setName in setNames:
         # how to search for all ground truth
-        forSearchInstanceIdsPngJ   = os.path.join(cityscapesPath, setName, "*_instanceIds.png")
+        forSearchInstanceIdsPngJ   = os.path.join(cityscapesPath, "gt", setName, "*_instanceIds.png")
         # search files
         instanceIdsPng_list = glob.glob(forSearchInstanceIdsPngJ)
         instanceIdsPng_list.sort()
