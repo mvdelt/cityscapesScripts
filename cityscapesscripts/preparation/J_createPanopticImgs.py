@@ -167,7 +167,7 @@ def convert2panoptic(cityscapesPath=None, outputFolder=None, useTrainId=False, s
                 #  (참고1: 256^2=65536) 
                 #  (참고2: COCO panoptic 형식에서 id=R+G*256+B*256^2, RGB는 어노png파일의 각 픽셀의 값.)
                 color = [segmentId%256, segmentId%(256*256)//256, segmentId%(256*256*256)//(256*256)] 
-                print(f'j) id -> color(RGB): {color}')
+                print(f'j) id:{segmentId} -> color(RGB):{color}')
                 # i.21.3.8.22:28)->요게 내가 수정한거. 세번쨋놈은 그냥 segmentId//(256*256) 
                 # 또는 segmentId//256/256 으로 해도 되지만(id가 256^3보다 작을것이라서), 일반화를 위해 저렇게 적었음. 규칙성도 눈에잘보이고.
                 #
