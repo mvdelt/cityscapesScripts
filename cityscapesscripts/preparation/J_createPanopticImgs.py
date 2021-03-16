@@ -113,6 +113,7 @@ def convert2panoptic(cityscapesPath=None, outputFolder=None, useTrainId=False, s
 
 
 
+
             # # fileName ex: imp2_0_instanceIds.png, imp4_120_instanceIds.png   (imp{A}_{00B}_instanceIds.png 이런식. A:2,3,4, B:0~3자리수)
             # # i.21.3.8.오후쯤) ->여기서 A00B 이런식으로 이미지id 만들어줄거임. B가 두자리면 A0bb, 세자리면 Abbb 이런식으로.
             # # i.21.3.10.19:37) 굳이이렇게할필요없음. 이미지id 는 그냥 문자열 숫자열 섞여있어도 상관없음.
