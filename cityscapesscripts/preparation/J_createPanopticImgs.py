@@ -75,10 +75,10 @@ def convert2panoptic(cityscapesPath=None, outputFolder=None, useTrainId=False, s
         # how to search for all ground truth
         forSearchInstanceIdsPngJ   = os.path.join(cityscapesPath, "gt", setName, "*_instanceIds.png")
         # search files
-        instanceIdsPng_list = glob.glob(forSearchInstanceIdsPngJ)
-        instanceIdsPng_list.sort()
+        instanceIdsPngPath_list = glob.glob(forSearchInstanceIdsPngJ)
+        instanceIdsPngPath_list.sort()
 
-        files = instanceIdsPng_list
+        files = instanceIdsPngPath_list
         # quit if we did not find anything
         if not files:
             printError(
@@ -113,16 +113,25 @@ def convert2panoptic(cityscapesPath=None, outputFolder=None, useTrainId=False, s
 
 
 
-            # fileName ex: imp2_0_instanceIds.png, imp4_120_instanceIds.png   (imp{A}_{00B}_instanceIds.png 이런식. A:2,3,4, B:0~3자리수)
-            # i.21.3.8.오후쯤) ->여기서 A00B 이런식으로 이미지id 만들어줄거임. B가 두자리면 A0bb, 세자리면 Abbb 이런식으로.
-            # i.21.3.10.19:37) TODO: 굳이이렇게할필요없음. 이미지id 는 그냥 문자열 숫자열 섞여있어도 상관없음.
-            #  그리고 Det2 의 데이터셋레지스터하는 코드 사용하려면.. 이미지id를 베이스네임?같은식으로 좀 맞춰줘야해서.. 암튼 이코드부분 수정필요.
-            implDatasetGroupNumJ = fileName[3] # "2", "4"
-            implSubNumJ = fileName[len("impX_"):-len("_instanceIds.png")] # "0", "120"
+            # # fileName ex: imp2_0_instanceIds.png, imp4_120_instanceIds.png   (imp{A}_{00B}_instanceIds.png 이런식. A:2,3,4, B:0~3자리수)
+            # # i.21.3.8.오후쯤) ->여기서 A00B 이런식으로 이미지id 만들어줄거임. B가 두자리면 A0bb, 세자리면 Abbb 이런식으로.
+            # # i.21.3.10.19:37) 굳이이렇게할필요없음. 이미지id 는 그냥 문자열 숫자열 섞여있어도 상관없음.
+            # #  그리고 Det2 의 데이터셋레지스터하는 코드 사용하려면.. 이미지id를 베이스네임?같은식으로 좀 맞춰줘야해서.. 암튼 이코드부분 수정필요.
+            # #    ->바로아래에서수정함/21.3.16.11:42.
+            # implDatasetGroupNumJ = fileName[3] # "2", "4"
+            # implSubNumJ = fileName[len("impX_"):-len("_instanceIds.png")] # "0", "120"
 
-            imageIdJ = implDatasetGroupNumJ + (3-len(implSubNumJ))*"0" + implSubNumJ # "2000", "4120"   (A00B 이런식)
+            # imageIdJ = implDatasetGroupNumJ + (3-len(implSubNumJ))*"0" + implSubNumJ # "2000", "4120"   (A00B 이런식)
+            # inputImgFileNameJ = fileName.replace("_instanceIds.png", ".jpg")
+            # outAnnoPngNameJ = fileName.replace("_instanceIds.png", "_panopticAnno.png")
+
+
+            # i.21.3.16.11:37) 내가 기존엔 바로위코드처럼 이미지id 를 A00B이런식으로 만들어줬었는데, 
+            #  굳이그럴필요없고 그냥 'imp2_0' 이런식으로 스트링으로 해줘도돼서, 그렇게하기로했음.
+            imageIdJ = fileName[:-len("_instanceIds.png")]  # 'imp2_0' 이런식.
             inputImgFileNameJ = fileName.replace("_instanceIds.png", ".jpg")
             outAnnoPngNameJ = fileName.replace("_instanceIds.png", "_panopticAnno.png")
+
 
 
 
