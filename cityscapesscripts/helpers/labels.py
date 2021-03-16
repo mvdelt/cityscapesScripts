@@ -105,19 +105,33 @@ Label = namedtuple( 'Label' , [
 # i.21.3.6.23:52) 내가 새로 정해준 Label들. color 는 coco-annotator 에서내가정해준 색깔과 유사하게 해놔봣음.
 #  category 는 일단 대충 정해봣는데.. 이건 어케하든 상관없는거겟지?
 #  hasInstances 를 어케해주냐에 따라서 어떻게 달라지는거지..?????????
-#  참고로 hasInstances 가 True 면 
+#  참고로 hasInstances 가 True 면 (<-코멘트 작성하다 말았음..;;)
+# labels = [
+#     #       name                     id    trainId   category            catId     hasInstances   ignoreInEval   color
+#     Label(  'unlabeled_Label'      ,  0 ,        0 , 'voidJ'           , 0       , False        , False        , (  0,  0,  0) ),
+#     Label(  'Rt_sinus'             ,  1 ,        1 , 'sinusJ'          , 1       , False        , False        , (  0,  0,255) ),
+#     Label(  'Lt_sinus'             ,  2 ,        2 , 'sinusJ'          , 1       , False        , False        , (255,  0,  0) ),
+#     Label(  'maxilla'              ,  3 ,        3 , 'boneJ'           , 2       , False        , False        , (162,156,255) ),
+#     Label(  'mandible'             ,  4 ,        4 , 'boneJ'           , 2       , False        , False        , (185,181,247) ),
+#     Label(  'Rt_canal'             ,  5 ,        5 , 'canalJ'          , 3       , False        , False        , ( 76, 68,212) ),
+#     Label(  'Lt_canal'             ,  6 ,        6 , 'canalJ'          , 3       , False        , False        , (194, 37,144) ),
+#     Label(  't_normal'             ,  7 ,        7 , 'toothJ'          , 4       , True         , False        , ( 66,158, 27) ),
+#     Label(  't_tx'                 ,  8 ,        8 , 'toothJ'          , 4       , True         , False        , ( 88,214, 34) ),
+#     Label(  'impl'                 ,  9 ,        9 , 'toothJ'          , 4       , True         , False        , (116,255, 56) ),
+# ]
+
+# i.21.3.16.23:44) 그냥 작업 간단히 하기위해, Det2에 내재된 수평플립(좌우플립) 걍 이용해주려고, Rt Lt 구분 없게 바꿔주려함.
+#  만약 Rt Lt 구분 있었으면 수평플립 꺼주고 대신 내가 직접 오그멘테이션해줘야하지(구강계AI대회에서 내가직접 좌우플립 오그멘테이션해준것처럼).
 labels = [
     #       name                     id    trainId   category            catId     hasInstances   ignoreInEval   color
     Label(  'unlabeled_Label'      ,  0 ,        0 , 'voidJ'           , 0       , False        , False        , (  0,  0,  0) ),
-    Label(  'Rt_sinus'             ,  1 ,        1 , 'sinusJ'          , 1       , False        , False        , (  0,  0,255) ),
-    Label(  'Lt_sinus'             ,  2 ,        2 , 'sinusJ'          , 1       , False        , False        , (255,  0,  0) ),
-    Label(  'maxilla'              ,  3 ,        3 , 'boneJ'           , 2       , False        , False        , (162,156,255) ),
-    Label(  'mandible'             ,  4 ,        4 , 'boneJ'           , 2       , False        , False        , (185,181,247) ),
-    Label(  'Rt_canal'             ,  5 ,        5 , 'canalJ'          , 3       , False        , False        , ( 76, 68,212) ),
-    Label(  'Lt_canal'             ,  6 ,        6 , 'canalJ'          , 3       , False        , False        , (194, 37,144) ),
-    Label(  't_normal'             ,  7 ,        7 , 'toothJ'          , 4       , True         , False        , ( 66,158, 27) ),
-    Label(  't_tx'                 ,  8 ,        8 , 'toothJ'          , 4       , True         , False        , ( 88,214, 34) ),
-    Label(  'impl'                 ,  9 ,        9 , 'toothJ'          , 4       , True         , False        , (116,255, 56) ),
+    Label(  'sinus'                ,  1 ,        1 , 'sinusJ'          , 1       , False        , False        , (  0,  0,255) ),
+    Label(  'maxilla'              ,  2 ,        2 , 'boneJ'           , 2       , False        , False        , (162,156,255) ),
+    Label(  'mandible'             ,  3 ,        3 , 'boneJ'           , 2       , False        , False        , (185,181,247) ),
+    Label(  'canal'                ,  4 ,        4 , 'canalJ'          , 3       , False        , False        , ( 76, 68,212) ),
+    Label(  't_normal'             ,  5 ,        5 , 'toothJ'          , 4       , True         , False        , ( 66,158, 27) ),
+    Label(  't_tx'                 ,  6 ,        6 , 'toothJ'          , 4       , True         , False        , ( 88,214, 34) ),
+    Label(  'impl'                 ,  7 ,        7 , 'toothJ'          , 4       , True         , False        , (116,255, 56) ),
 ]
 
 
