@@ -46,8 +46,13 @@ import os, glob, sys
 
 # # cityscapes imports
 # from cityscapesscripts.helpers.csHelpers import printError
-# from cityscapesscripts.preparation.json2instanceImg import json2instanceImg
-from json2instanceImg import json2instanceImg
+from cityscapesscripts.preparation.json2instanceImg import json2instanceImg
+# from json2instanceImg import json2instanceImg 
+# i. 21.3.17.10:51) ->내가 왜 윗윗줄 코멘트아웃하고 이렇게해줬던거지? 내로컬컴에서 cityscapesscripts 설치안한상태로 돌려보느라 그랬었나?
+#  이렇게 (from json2instanceImg import json2instanceImg) 해준 상태에선, 
+#  코랩에서 !python /usr/local/lib/python3.7/dist-packages/cityscapesscripts/preparation/J_createInstanceImgs.py 하면 잘 되지만,
+#  !python -m cityscapesscripts.preparation.J_createInstanceImgs 이렇게하면 경로 못찾음.
+
 
 
 
