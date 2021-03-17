@@ -55,11 +55,20 @@ def createLabelImage(annotation, encoding, outline=None):
     if encoding == "ids":
         background = name2label['unlabeled'].id
     elif encoding == "trainIds":
-        # i. 21.3.10.21:24) 마찬가지로 unlabled 라고돼있던걸 unlabeld_Label 로, 내가정해준이름으로 바꿔줌 (~~labelTrainIds.png 를 만들어줘야된단걸 알게돼서, 만들어주려고).
-        background = name2label['unlabeled_Label'].trainId 
+        # # i. 21.3.10.21:24) 마찬가지로 unlabled 라고돼있던걸 unlabeled_Label 로, 내가정해준이름으로 바꿔줌 (~~labelTrainIds.png 를 만들어줘야된단걸 알게돼서, 만들어주려고).
+        # background = name2label['unlabeled_Label'].trainId 
+
+        # i.21.3.17.22:20) unlabeled_Label 없애줘서, 그에맞게 변경.
+        background = 255
+        
+
     elif encoding == "color":
-        # i. 지금 칼라로 png 그려줘보려는데, 원래'unlabeled'라고돼잇는걸 내가'unlabeled_Label'로 바꿔줫기때매 이렇게해줌.
-        background = name2label['unlabeled_Label'].color 
+        # # i. 지금 칼라로 png 그려줘보려는데, 원래'unlabeled'라고돼잇는걸 내가'unlabeled_Label'로 바꿔줫기때매 이렇게해줌.
+        # background = name2label['unlabeled_Label'].color 
+        
+        # i.21.3.17.22:20) unlabeled_Label 없애줘서, 그에맞게 변경.
+        background = (  0,  0,  0)
+
     else:
         print("Unknown encoding '{}'".format(encoding))
         return None

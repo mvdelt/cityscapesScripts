@@ -85,8 +85,8 @@ catId2catName = {cat["id"]: cat["name"] for cat in coco_obj_det_anno["categories
 
 # i.21.3.17.9:21) 원래필요없어야하는데, 내가사용한어노테이션툴인 'coco-annotator' 의 버그때문에 작성하는부분.
 #  (무슨버그냐면: Rt Lt 구분 없애주려고 coco-annotator 에서 기존 클래스들중 Rt Lt 구분되는 클래스들(sinus, canal) 없애고 
-#   Rt Lt 통합한 클래스들 다시 만들어줬는데, 기존에 어노테이션해둔 파노(겨우2장이긴함)의 기존 Rt Lt 구분되는 클래스들에대한 어노테이션정보가
-#   삭제되지 않고 그대로 남아있는 버그.)
+#  Rt Lt 통합한 클래스들 다시 만들어줬는데, 기존에 어노테이션해둔 파노(겨우2장이긴함)의 기존 Rt Lt 구분되는 클래스들에대한 어노테이션정보가
+#  삭제되지 않고 그대로 남아있는 버그.)
 #  사실 버그해결만 위해서는 뭐 이것도 필요없는데, 버그해결상황좀 확인하기위함임.
 imgId2imgFileName = {img["id"]: img["file_name"] for img in coco_obj_det_anno["images"]}
 bugCatImgFileName2bugCatIds = {} # ex: {'imp2_1.jpg':[36,37], ...}

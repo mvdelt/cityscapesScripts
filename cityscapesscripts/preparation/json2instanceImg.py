@@ -88,7 +88,18 @@ def createInstanceImage(annotation, encoding):
 
     # the background
     if encoding == "ids":
-        backgroundId = name2label['unlabeled_Label'].id  # i.21.3.7.13:36) 내가 labels.py 에서 'unlabeled_Label' 이라고 바꿔줬었기때매 여기도 이렇게 해줌.
+        
+        # backgroundId = name2label['unlabeled_Label'].id  # i.21.3.7.13:36) 내가 labels.py 에서 'unlabeled_Label' 이라고 바꿔줬었기때매 여기도 이렇게 해줌.
+        
+        # i.21.3.17.22:03) labels.py 에서 unlabeled_Label 를 아예 없애줘버렷기때매, 걍 내가 255로 직접 지정해줫음.
+        #  기존에는 name2label['unlabeled_Label'].id 값이 0 이었기때문에 어노png에 백그라운드는 id값 0으로 그려졌었는데,
+        #  기존엔 'unlabeled_Label' 도 클래스중 하나로 처리됐었기때문에 그렇게 하면 되지만,
+        #  이제 내가 labels.py 의 카테고리 목록에서 unlabeled_Label 을 없애버렸기때문에 이 값을 무시하도록 되어있는 값으로 해줘야할듯함.
+        #  아마 255가 무시하는 값일거임. 기본적으로 그냥 카테고리id 가 아닌, 카테고리의 trainId 를 사용하는게 표준적인 방식인것같은데(난 모르고 걍 카테고리id 사용했지만),
+        #  labels.py 보면 기본의 'unlabeled' 카테고리 및 다른 무시해주는 카테고리들의 trainId 값이 255로 되어있고,
+        #  Metadata 값 정해줄때도 ignore_label=255 로 해주고있고.
+        backgroundId = 255 
+
     elif encoding == "trainIds":
         backgroundId = name2label['unlabeled'].trainId
     else:

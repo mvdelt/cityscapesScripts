@@ -382,7 +382,7 @@ class Annotation:
         #  TODO: 지금 일단 걍 했는데, 연산 더 빠르게 하려면?
         # Z_ORDER_J = ['Rt_sinus', 'Lt_sinus', 'maxilla', 'mandible', 'Rt_canal', 'Lt_canal', 't_normal', 't_tx', 'impl']
         # Z_ORDER_J = ['mandible', 'Rt_sinus', 'Lt_sinus', 'maxilla', 'Rt_canal', 'Lt_canal', 't_normal', 't_tx', 'impl'] # i.21.3.7.16:48) mandible 을 젤 밑으로 내려줌.
-        Z_ORDER_J = ['mandible', 'sinus', 'maxilla', 'canal', 't_normal', 't_tx', 'impl'] # i.21.3.17.1:01) Rt Lt 구분 없앤걸로 수정.
+        Z_ORDER_J = ['mandible', 'sinus', 'maxilla', 't_normal', 't_tx', 'impl', 'canal'] # i.21.3.17.1:01) Rt Lt 구분 없앤걸로 수정. # i.21.3.17.21:33) canal 을 젤 위로(별차이는없겠지만).
         z_ordered_objList = []
         for i in Z_ORDER_J:
             for obj in jsonDict['objects']:
