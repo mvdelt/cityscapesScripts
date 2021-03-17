@@ -160,9 +160,17 @@ def convert2panoptic(cityscapesPath=None, outputFolder=None, useTrainId=False, s
                 else: # i. id값이 1000이상이면, iscrowd=0 인 thing임./21.3.9.9:38.
                     semanticId = segmentId // 1000 
                     isCrowd = 0
+                
+                # i.21.3.17.23:06) 내가 'unlabeled_Label' 을 없애줬고 백그라운드의 segmentId 값은 내가정해준대로 255 일것이므로, 
+                #  바로아래의 labelInfo = id2label[semanticId] 가 실행되면 KeyError: 255 가 발생함.
+                #  근데 어차피 기존 cityscapes 의 labels.py 대로라고 해도, label 의 ignoreInEval 이 True 일 경우 continue 해서 무시해주고있음(아래 보면 나오지).
+                #  즉, 백그라운드는 걍 무시하면 됨. 따라서 semanticId(=segmentId) 값이 255이면 continue 해줌.
+                if semanticId == 255:
+                    continue
+
                 labelInfo = id2label[semanticId]
                 categoryId = labelInfo.trainId if useTrainId else labelInfo.id
-                if labelInfo.ignoreInEval:
+                if labelInfo.ignoreInEval: # i. <- 요거 기존코드인데, ignoreInEval 이 True 면 걍 continue 해서 무시하는것을 볼수있음. /21.3.17.23:14.
                     continue
                 if not labelInfo.hasInstances: # i. stuff면, iscrowd 의미없고 기본적으로 0임.(COCO형식 참고하삼)/21.3.9.9:45.
                     isCrowd = 0
