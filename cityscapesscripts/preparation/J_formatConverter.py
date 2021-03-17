@@ -14,7 +14,7 @@
 #
 # i.21.3.14.23:32) 참고로, 여기 내가 써놓은 'COCO object detection 형식' 이라는것은, 
 #  정확히말하면 object detection 이 아니고 instance segmentation 임.
-#  (COCO 에서는 Object Detection 태스크가 사실 instance segmentation 태스크임. segmentation 다 해줘야함.)
+#  (COCO 에서는 Object Detection 태스크가 사실 instance segmentation 태스크임. segmentation 까지 다 해줘야하는 태스크임.)
 #  TODO: obj det 라고 표기해놓은것들 ins seg 등으로 표기 바꾸는게 나으려나? 나중에 봤을때 헷갈리지 않도록?
 #
 ########################################################################################################################
@@ -71,6 +71,7 @@ COCOFORM_OBJ_DET_ANNOJSON_LOADPATH_J = "/content/datasetsJ/panopticSeg_dentPanoJ
 CITYSCAPESFORM_POLYGONS_JSON_SAVEDIRPATH_J = "/content/datasetsJ/panopticSeg_dentPanoJ/gt/train" 
 
 
+
 # COCO object detection 형식의 어노json파일을 읽어들임.
 try:
     with open(COCOFORM_OBJ_DET_ANNOJSON_LOADPATH_J) as f:
@@ -82,9 +83,30 @@ except FileNotFoundError:
 # catId to catName
 catId2catName = {cat["id"]: cat["name"] for cat in coco_obj_det_anno["categories"]}
 
+# i.21.3.17.9:21) 원래필요없어야하는데, 내가사용한어노테이션툴인 'coco-annotator' 의 버그때문에 작성하는부분.
+#  (무슨버그냐면: Rt Lt 구분 없애주려고 coco-annotator 에서 기존 클래스들중 Rt Lt 구분되는 클래스들(sinus, canal) 없애고 
+#   Rt Lt 통합한 클래스들 다시 만들어줬는데, 기존에 어노테이션해둔 파노(겨우2장이긴함)의 기존 Rt Lt 구분되는 클래스들에대한 어노테이션정보가
+#   삭제되지 않고 그대로 남아있는 버그.)
+#  사실 버그해결만 위해서는 뭐 이것도 필요없는데, 버그해결상황좀 확인하기위함임.
+imgId2imgFileName = {img["id"]: img["file_name"] for img in coco_obj_det_anno["images"]}
+bugCatImgFileName2bugCatIds = {} # ex: {'imp2_1.jpg':[36,37], ...}
+
 # imgId to cityscapes objects
 imgId2csObjects = {}
 for annotation in coco_obj_det_anno["annotations"]:
+
+    # i.21.3.17.9:21) 원래필요없어야하는데, 내가사용한어노테이션툴인 'coco-annotator' 의 버그때문에 작성하는부분.
+    #  catId2catName 에 없는 annotation 이면,
+    #  imgId2imgFileName 이용해서 어떤 이미지에서 어떤 카테고리id 가 없었던건지 기록하고(이 기록은 그냥 내가 확인해보려는 용도임),
+    #  이 annotation 은 패스함 (continue).
+    if not annotation["category_id"] in catId2catName:
+        bugCatImgFileName = imgId2imgFileName[annotation["image_id"]]
+        if bugCatImgFileName in bugCatImgFileName2bugCatIds:
+            bugCatImgFileName2bugCatIds[bugCatImgFileName].append(annotation["category_id"])
+        else:
+            bugCatImgFileName2bugCatIds[bugCatImgFileName] = [annotation["category_id"]]
+        continue
+
     # 1 coco annotation to (maybe multiple) cityscapes polygon(s). (coco 에선 한 annotation 에 polygon 이 여러개잇을수잇음)
     for oneCocoPolygon in annotation["segmentation"]:
         csPolygon = [[x,y] for x,y in zip(oneCocoPolygon[0::2], oneCocoPolygon[1::2])]
@@ -96,6 +118,11 @@ for annotation in coco_obj_det_anno["annotations"]:
             imgId2csObjects[annotation["image_id"]] = [csObject]
         else:
             imgId2csObjects[annotation["image_id"]].append(csObject)
+
+
+# i.21.3.17.10:08) 버그상황 출력.
+print(f'j) 버그있는 이미지 및 버그카테고리들: {bugCatImgFileName2bugCatIds}')
+
 
 # 한 이미지당 하나의 (cityscapes의)~~polygons.json 파일을 만듦.
 for imgDict in coco_obj_det_anno["images"]:
