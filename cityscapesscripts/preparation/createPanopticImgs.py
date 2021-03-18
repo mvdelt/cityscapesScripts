@@ -32,6 +32,11 @@ from cityscapesscripts.helpers.labels import id2label, labels
 
 # The main method
 def convert2panoptic(cityscapesPath=None, outputFolder=None, useTrainId=False, setNames=["val", "train", "test"]):
+    # i.21.3.18.1:35) Det2 에서는 지금 이 함수에서 useTrainId 값을 False 로 해준걸로 가정하고 처리해줌!!
+    #   - Det2의 cityscapes_panoptic.py(cityscapes panoptic 데이터셋 레지스터해주는파일)의 _convert_category_id 함수는
+    #  cityscapesscripts 의 createPanopticImgs.py (바로 지금 이 파일) 의 convert2panoptic 함수에서 
+    #  useTrainId=False 로 적용했을때(segment_info 의 "category_id" 가 카테고리의 trainId 가 아닌 그냥id로 셋팅됨)를 가정하고 작동하는거네. 
+    #  그래서결국, segment_info["category_id"] 를 카테고리의 그냥id에서 trainId 로 바꿔주는거임.
     # Where to look for Cityscapes
     if cityscapesPath is None:
         if 'CITYSCAPES_DATASET' in os.environ:

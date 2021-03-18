@@ -89,7 +89,7 @@ def createInstanceImage(annotation, encoding):
     # the background
     if encoding == "ids":
         
-        # backgroundId = name2label['unlabeled_Label'].id  # i.21.3.7.13:36) 내가 labels.py 에서 'unlabeled_Label' 이라고 바꿔줬었기때매 여기도 이렇게 해줌.
+        backgroundId = name2label['unlabeled_Label'].id  # i.21.3.7.13:36) 내가 labels.py 에서 'unlabeled_Label' 이라고 바꿔줬었기때매 여기도 이렇게 해줌.
         
         # i.21.3.17.22:03) labels.py 에서 unlabeled_Label 를 아예 없애줘버렷기때매, 걍 내가 255로 직접 지정해줫음.
         #  기존에는 name2label['unlabeled_Label'].id 값이 0 이었기때문에 어노png에 백그라운드는 id값 0으로 그려졌었는데,
@@ -98,7 +98,21 @@ def createInstanceImage(annotation, encoding):
         #  아마 255가 무시하는 값일거임. 기본적으로 그냥 카테고리id 가 아닌, 카테고리의 trainId 를 사용하는게 표준적인 방식인것같은데(난 모르고 걍 카테고리id 사용했지만),
         #  labels.py 보면 기본의 'unlabeled' 카테고리 및 다른 무시해주는 카테고리들의 trainId 값이 255로 되어있고,
         #  Metadata 값 정해줄때도 ignore_label=255 로 해주고있고.
-        backgroundId = 255 
+        #
+        # i.21.3.18.10:53) 백그라운드의 id값은 뭐가돼도 상관없기는 함.
+        #  ('unlabeled_Label'의 id값이랑은 같아야함. createPanopticImgs.py 에서 ~~instanceIds.png 의 id값들로 그에 해당하는 Label들의 정보를 확인하기때문에.) 
+        #  왜 상관없냐면, 지금 여기서 ~~instanceIds.png 를 만들어주는건데(물론 다른 cityscapes어노png 들도 만들수있지만), 
+        #  백그라운드 Label 의 'ignoreInEval' 값을 True 로 해줬을것인데,
+        #  createPanopticImgs.py 에서 ~~instanceIds.png 로부터 coco어노png 를 만들어줄때 ignoreInEval 이 True 인 것들은 그려주지 않고 스킵하기 때문에.
+        #    즉, 지금 다시 unlabeled_Label 사용해주기로했고 unlabeled_Label 의 id값이 0이지만,
+        #  백그라운드의 id값은 뭘로해도 상관없긴함. 어차피 coco어노png 에는 안그려지니까(ignoreInEval 이 True 인 이상).
+        #  그리고 Det2 에서는 'unlabeled'(내플젝에선 'unlabeled_Label') 는 아예 사용을 안함. 의미있는 카테고리들(foreground카테고리들)의 정보만 사용함.
+        #    다만, 의미있는 카테고리(클래스)들은 id값이 0이면 안됨.
+        #  왜냐면, createPanopticImgs.py 에서 ~~instanceIds.png 로부터 coco어노png 를 만들어줄때 백그라운드 픽셀을 [0,0,0] 으로 해주고있는데,
+        #  id값이 0이면 256진법으로 RGB로 변환됐을때 [0,0,0] 이기때문에 백그라운드랑 값이 똑같아져버림!!
+        #  (내가 mandible 의 id 를 0으로 했다가 백그라운드랑 똑같이 취급돼버렷지.)
+        #    따라서 다시 backgroundId = name2label['unlabeled_Label'].id 로 해줌.
+        # backgroundId = 255 
 
     elif encoding == "trainIds":
         backgroundId = name2label['unlabeled'].trainId

@@ -51,6 +51,11 @@ CS_ROOTDIRPATH_J = "/content/datasetsJ/panopticSeg_dentPanoJ"
 
 # The main method
 def convert2panoptic(cityscapesPath=None, outputFolder=None, useTrainId=False, setNames=["val", "train", "test"]):
+    # i.21.3.18.1:35) Det2 에서는 지금 이 함수에서 useTrainId 값을 False 로 해준걸로 가정하고 처리해줌!!
+    #   - Det2의 cityscapes_panoptic.py(cityscapes panoptic 데이터셋 레지스터해주는파일)의 _convert_category_id 함수는
+    #  cityscapesscripts 의 createPanopticImgs.py (바로 지금 이 파일에 해당하지) 의 convert2panoptic 함수에서 
+    #  useTrainId=False 로 적용했을때(segment_info 의 "category_id" 가 카테고리의 trainId 가 아닌 그냥id로 셋팅됨)를 가정하고 작동하는거네. 
+    #  그래서결국, segment_info["category_id"] 를 카테고리의 그냥id에서 trainId 로 바꿔주는거임.
     print(f'j) <inputs shoud be> cityscapesPath:None, outputFolder:None, useTrainId:False, setNames:["train"]')
     print(f'j)   <actual inputs> cityscapesPath:{cityscapesPath}, outputFolder:{outputFolder}, useTrainId:{useTrainId}, setNames:{setNames}')
     # Where to look for Cityscapes
@@ -142,6 +147,9 @@ def convert2panoptic(cityscapesPath=None, outputFolder=None, useTrainId=False, s
                            "height": int(cs_annoPng_arrJ.shape[0]),
                            "file_name": inputImgFileNameJ})
 
+            # i.21.3.18.11:37) 여기서 coco_annoPng_arrJ 의 모든픽셀을 0으로 초기화해서 시작하는데,
+            #  ignoreInEval 이 True 인 카테고리들은 그려지지않고 스킵되니까 초기화상태의 값인 [0,0,0] 이 그대로 백그라운드 픽셀의 값이 됨.
+            #  따라서, foreground 카테고리중에 id값을 0으로 해준게 있으면 256진법 RGB 로 변환시 [0,0,0] 이 돼버려서 백그라운드랑 똑같아져버리는 문제 발생.
             coco_annoPng_arrJ = np.zeros(
                 (cs_annoPng_arrJ.shape[0], cs_annoPng_arrJ.shape[1], 3), dtype=np.uint8  # i.21.3.9.8:04) Unsigned integer 0 to 255
             )
@@ -161,16 +169,22 @@ def convert2panoptic(cityscapesPath=None, outputFolder=None, useTrainId=False, s
                     semanticId = segmentId // 1000 
                     isCrowd = 0
                 
-                # i.21.3.17.23:06) 내가 'unlabeled_Label' 을 없애줬고 백그라운드의 segmentId 값은 내가정해준대로 255 일것이므로, 
-                #  바로아래의 labelInfo = id2label[semanticId] 가 실행되면 KeyError: 255 가 발생함.
-                #  근데 어차피 기존 cityscapes 의 labels.py 대로라고 해도, label 의 ignoreInEval 이 True 일 경우 continue 해서 무시해주고있음(아래 보면 나오지).
-                #  즉, 백그라운드는 걍 무시하면 됨. 따라서 semanticId(=segmentId) 값이 255이면 continue 해줌.
-                if semanticId == 255:
-                    continue
+                # # i.21.3.17.23:06) 내가 'unlabeled_Label' 을 없애줬고 백그라운드의 segmentId 값은 내가정해준대로 255 일것이므로, 
+                # #  바로아래의 labelInfo = id2label[semanticId] 가 실행되면 KeyError: 255 가 발생함.
+                # #  근데 어차피 기존 cityscapes 의 labels.py 대로라고 해도, label 의 ignoreInEval 이 True 일 경우 continue 해서 무시해주고있음(아래 보면 나오지).
+                # #  즉, 백그라운드는 걍 무시하면 됨. 따라서 semanticId(=segmentId) 값이 255이면 continue 해줌.
+                # # i.21.3.18.10:06) ->백그라운드는 무시하면 되는건 맞는데, mandible 의 id값을 0으로 해버려서 요아래 color 정해줄때
+                # #  mandible 의 color 가 [0,0,0] 으로 돼버려서, mandible 이랑 백그라운드가 모두 [0,0,0] 으로 돼버림.
+                # #  (위에서 coco_annoPng_arrJ 만들어줄때 모든원소들을 0으로 초기화해서 시작하니까 백그라운드 픽셀들은 기본적으로 [0,0,0] 인거지.)
+                # #  그래서 걍 다시 바꾸는중.
+                # if semanticId == 255:
+                #     continue
 
                 labelInfo = id2label[semanticId]
-                categoryId = labelInfo.trainId if useTrainId else labelInfo.id
-                if labelInfo.ignoreInEval: # i. <- 요거 기존코드인데, ignoreInEval 이 True 면 걍 continue 해서 무시하는것을 볼수있음. /21.3.17.23:14.
+                # i. Det2 에서는 여기서 useTrainId 가 False 인걸로 가정하고 처리함.
+                #  즉, 여기서 categoryId 가 trainId 말고 그냥 id 인것으로 가정하고 처리함./21.3.18.9:57.
+                categoryId = labelInfo.trainId if useTrainId else labelInfo.id 
+                if labelInfo.ignoreInEval: # i. <- 요거 기존코드인데, ignoreInEval 이 True 면 걍 continue 해서 무시하는것을 볼수있음./21.3.17.23:14.
                     continue
                 if not labelInfo.hasInstances: # i. stuff면, iscrowd 의미없고 기본적으로 0임.(COCO형식 참고하삼)/21.3.9.9:45.
                     isCrowd = 0
@@ -209,8 +223,11 @@ def convert2panoptic(cityscapesPath=None, outputFolder=None, useTrainId=False, s
                 height = vert_idx[-1] - y + 1
                 bbox = [int(x), int(y), int(width), int(height)]
 
-                segmInfo.append({"id": int(segmentId),
-                                 "category_id": int(categoryId),
+                segmInfo.append({# i. segmentId 는 ~~instanceIds.png 의 각 픽셀값.
+                                 "id": int(segmentId),
+                                 # i. Det2에선 이값이 trainId 아닌 그냥id 인걸로 가정하고, 
+                                 #  이값을 trainId 로 바꿔서 Det2형식으로 만듦(데이터셋 레지스터해주는 cityscapse_panoptic.py 에서.) /21.3.18.10:00.
+                                 "category_id": int(categoryId), 
                                  "area": int(area),
                                  "bbox": bbox,
                                  "iscrowd": isCrowd})

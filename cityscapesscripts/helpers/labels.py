@@ -145,15 +145,44 @@ Label = namedtuple( 'Label' , [
 #  
 #    그리고, 위에적은대로, unlabeled_Label 자체를 걍 없애버리고 총 클래스수를 8개가 아닌 7개로 바꿔주려함.
 #  그리고 Label들 순서 바꿔줫고, maxilla 색깔 붉은주황색계열로 바꿔줘봄.
+# labels = [
+#     #       name                     id    trainId   category            catId     hasInstances   ignoreInEval   color
+#     Label(  'mandible'             ,  0 ,        0 , 'boneJ'           , 0       , False        , False        , (185,181,247) ),
+#     Label(  'maxilla'              ,  1 ,        1 , 'boneJ'           , 0       , True         , False        , (255, 85, 79) ),
+#     Label(  'sinus'                ,  2 ,        2 , 'sinusJ'          , 1       , True         , False        , (  0,  0,255) ),
+#     Label(  'canal'                ,  3 ,        3 , 'canalJ'          , 2       , True         , False        , ( 76, 68,212) ),
+#     Label(  't_normal'             ,  4 ,        4 , 'toothJ'          , 3       , True         , False        , ( 66,158, 27) ),
+#     Label(  't_tx'                 ,  5 ,        5 , 'toothJ'          , 3       , True         , False        , ( 88,214, 34) ),
+#     Label(  'impl'                 ,  6 ,        6 , 'toothJ'          , 3       , True         , False        , (116,255, 56) ),
+# ]
+
+# i.21.3.18.9:18) 바로위처럼 mandible 의 id를 0으로 해주니, ~~instanceIds.png 에 mandible 의 id값이 0으로 기록되는데,
+#  J_createPanopticImgs.py 에서 ~~instanceIds.png 로부터 coco어노png 만들어줄때 백그라운드 픽셀들의 값을 [0,0,0]으로 해주는데
+#  mandible 의 id 값이 0이라서 얘도 픽셀들 값이 [0,0,0] 으로 변환돼버림. 그래서 mandible이랑 백그라운드 둘다 [0,0,0]이돼서
+#  트레이닝 결과 보면 mandible과 백그라운드 전부 다 mandible 로 프레딕션하게된거임.
+#    -> 즉, 의미있는 클래스들은 id값이 0이 아니어야함(지금상태의 코드들을 이용해준다면). 
+#    -> 그래서 그냥 unlabeled_Label 을 다시사용해주되,
+#       Det2 mvdelt깃헙버전의 J_cityscapes_panoptic.py(데이터셋레지스터해주는파일) 에서 CITYSCAPES_CATEGORIES_J 에서는 unlabeled_Label 을 없애기로.
+#       (안사용하고 걍 mandible부터 id 1, trainId 0부터 시작하게해도 되긴 하겠지만)
+#  참고로 Det2 의 cityscapes_panoptic.py 에서는 의미있는 클래스들의 목록만 사용하고, 
+#  얘네들의 trainId 들은 0부터 연속적으로(0,1,2,...)돼있기때문에 trainId 를 "contiguous id" 로 사용해줌. 
+#  즉, Det2 형식에 넣어주는 각 segment_info 의 'category_id' 값은 trainId 이고 요게 연속적으로 0,1,2,.. 일케되는거임.
+#  Det2 에선 바로 이 연속적인 0,1,2,... 값들을 카테고리id 로서 사용하고,
+#  Det2 형식의 각 segment_info 에 'category_id' 뿐 아니라 'id' 도 있는데, 바로 이 'id' 값이 ~~instanceIds.png 및 coco어노png 에 저장된 각 픽셀의 id값임.
+#  (~~instanceIds.png 에는 10진법으로 id가 저장되고, coco어노png 에는 256진법으로 RGB로 id가 저장되지.)
+#  이 id 값들은 뭐가되든 상관없고 걍 인스턴스들마다 값이 달라서 구분만 되면 되는듯. 
+#  Det2 에서는, Det2 형식의 각 segment_info 의 'category_id' 와 'id' 정보를 통해서, coco어노png 의 id 값들로부터 카테고리id 값을 알아낼 수 있겠지.
+#  (참고로 segments_info 에 여러개의 segment_info 가 들어잇는거지. s 있냐없냐 잘봐라.)
 labels = [
     #       name                     id    trainId   category            catId     hasInstances   ignoreInEval   color
-    Label(  'mandible'             ,  0 ,        0 , 'boneJ'           , 0       , False        , False        , (185,181,247) ),
-    Label(  'maxilla'              ,  1 ,        1 , 'boneJ'           , 0       , True         , False        , (255, 85, 79) ),
-    Label(  'sinus'                ,  2 ,        2 , 'sinusJ'          , 1       , True         , False        , (  0,  0,255) ),
-    Label(  'canal'                ,  3 ,        3 , 'canalJ'          , 2       , True         , False        , ( 76, 68,212) ),
-    Label(  't_normal'             ,  4 ,        4 , 'toothJ'          , 3       , True         , False        , ( 66,158, 27) ),
-    Label(  't_tx'                 ,  5 ,        5 , 'toothJ'          , 3       , True         , False        , ( 88,214, 34) ),
-    Label(  'impl'                 ,  6 ,        6 , 'toothJ'          , 3       , True         , False        , (116,255, 56) ),
+    Label(  'unlabeled_Label'      ,  0 ,      255 , 'voidJ'           , 0       , False        , True         , (  0,  0,  0) ),
+    Label(  'mandible'             ,  1 ,        0 , 'boneJ'           , 1       , False        , False        , (185,181,247) ),
+    Label(  'maxilla'              ,  2 ,        1 , 'boneJ'           , 1       , True         , False        , (255, 85, 79) ),
+    Label(  'sinus'                ,  3 ,        2 , 'sinusJ'          , 2       , True         , False        , (  0,  0,255) ),
+    Label(  'canal'                ,  4 ,        3 , 'canalJ'          , 3       , True         , False        , ( 76, 68,212) ),
+    Label(  't_normal'             ,  5 ,        4 , 'toothJ'          , 4       , True         , False        , ( 66,158, 27) ),
+    Label(  't_tx'                 ,  6 ,        5 , 'toothJ'          , 4       , True         , False        , ( 88,214, 34) ),
+    Label(  'impl'                 ,  7 ,        6 , 'toothJ'          , 4       , True         , False        , (116,255, 56) ),
 ]
 
 
