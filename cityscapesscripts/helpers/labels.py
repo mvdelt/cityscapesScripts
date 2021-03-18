@@ -173,9 +173,26 @@ Label = namedtuple( 'Label' , [
 #  이 id 값들은 뭐가되든 상관없고 걍 인스턴스들마다 값이 달라서 구분만 되면 되는듯. 
 #  Det2 에서는, Det2 형식의 각 segment_info 의 'category_id' 와 'id' 정보를 통해서, coco어노png 의 id 값들로부터 카테고리id 값을 알아낼 수 있겠지.
 #  (참고로 segments_info 에 여러개의 segment_info 가 들어잇는거지. s 있냐없냐 잘봐라.)
+# labels = [
+#     #       name                     id    trainId   category            catId     hasInstances   ignoreInEval   color
+#     Label(  'unlabeled_Label'      ,  0 ,      255 , 'voidJ'           , 0       , False        , True         , (  0,  0,  0) ),
+#     Label(  'mandible'             ,  1 ,        0 , 'boneJ'           , 1       , False        , False        , (185,181,247) ),
+#     Label(  'maxilla'              ,  2 ,        1 , 'boneJ'           , 1       , True         , False        , (255, 85, 79) ),
+#     Label(  'sinus'                ,  3 ,        2 , 'sinusJ'          , 2       , True         , False        , (  0,  0,255) ),
+#     Label(  'canal'                ,  4 ,        3 , 'canalJ'          , 3       , True         , False        , ( 76, 68,212) ),
+#     Label(  't_normal'             ,  5 ,        4 , 'toothJ'          , 4       , True         , False        , ( 66,158, 27) ),
+#     Label(  't_tx'                 ,  6 ,        5 , 'toothJ'          , 4       , True         , False        , ( 88,214, 34) ),
+#     Label(  'impl'                 ,  7 ,        6 , 'toothJ'          , 4       , True         , False        , (116,255, 56) ),
+# ]
+
+# i.21.3.18.20:44) 바로위처럼 하고 Det2 의 J_cityscapes_panoptic.py 에서 unlabeled_Label 을 없애줬더니, 
+#  프레딕션 되지 않아야할 백그라운드가 foreground 카테고리들로 프레딕션되네;; 특히 sinus 가 많네. 아무래도 sinus가 시커멓니까
+#  파노영상의 어두운 백그라운드들이 다 sinus 로 프레딕션되는듯함.
+#  TODO: 그러면 unlabeled 카테고리를 따로 지정하지 않고 어케하지? threshold 를 지정해줘야하나?? 지금 이거 bowen깃헙에 질문올려본상태임.
+#  암튼 그래서 다시 예전처럼 unlabeled_Label 을 살려주려함.
 labels = [
     #       name                     id    trainId   category            catId     hasInstances   ignoreInEval   color
-    Label(  'unlabeled_Label'      ,  0 ,      255 , 'voidJ'           , 0       , False        , True         , (  0,  0,  0) ),
+    Label(  'unlabeled_Label'      ,  0 ,      255 , 'voidJ'           , 0       , False        , False        , (  0,  0,  0) ),
     Label(  'mandible'             ,  1 ,        0 , 'boneJ'           , 1       , False        , False        , (185,181,247) ),
     Label(  'maxilla'              ,  2 ,        1 , 'boneJ'           , 1       , True         , False        , (255, 85, 79) ),
     Label(  'sinus'                ,  3 ,        2 , 'sinusJ'          , 2       , True         , False        , (  0,  0,255) ),
