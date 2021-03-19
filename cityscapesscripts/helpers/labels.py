@@ -189,7 +189,8 @@ Label = namedtuple( 'Label' , [
 #  프레딕션 되지 않아야할 백그라운드가 foreground 카테고리들로 프레딕션되네;; 특히 sinus 가 많네. 아무래도 sinus가 시커멓니까
 #  파노영상의 어두운 백그라운드들이 다 sinus 로 프레딕션되는듯함.
 #  TODO: 그러면 unlabeled 카테고리를 따로 지정하지 않고 어케하지? threshold 를 지정해줘야하나?? 지금 이거 bowen깃헙에 질문올려본상태임.
-#  암튼 그래서 다시 예전처럼 unlabeled_Label 을 살려주려함.
+#  암튼 그래서 다시 예전처럼 unlabeled_Label 을 살려주려함. unlabeled_Label 의 ignoreInEval 도 다시 False 로 바꿔주고.
+#  아직 수정 다 못했음. 내일 해야함. 
 labels = [
     #       name                     id    trainId   category            catId     hasInstances   ignoreInEval   color
     Label(  'unlabeled_Label'      ,  0 ,      255 , 'voidJ'           , 0       , False        , False        , (  0,  0,  0) ),
