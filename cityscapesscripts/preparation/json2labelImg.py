@@ -59,7 +59,7 @@ def createLabelImage(annotation, encoding, outline=None):
         background = name2label['unlabeled_Label'].trainId 
 
         # # i.21.3.17.22:20) unlabeled_Label 없애줘서, 그에맞게 변경.
-        # # i.21.3.18.11:23) 다시 변경.
+        # # i.21.3.18.11:23) 다시 변경(요거 코멘트아웃, 다시 위의 background = name2label['unlabeled_Label'].trainId 이용).
         # background = 255
         
 
@@ -68,7 +68,7 @@ def createLabelImage(annotation, encoding, outline=None):
         background = name2label['unlabeled_Label'].color 
         
         # # i.21.3.17.22:20) unlabeled_Label 없애줘서, 그에맞게 변경.
-        # # # i.21.3.18.11:23) 다시 변경.
+        # # # i.21.3.18.11:23) 다시 변경(요거 코멘트아웃, 다시 위의 background = name2label['unlabeled_Label'].color 이용).
         # background = (  0,  0,  0)
 
     else:

@@ -111,7 +111,7 @@ def createInstanceImage(annotation, encoding):
         #  왜냐면, createPanopticImgs.py 에서 ~~instanceIds.png 로부터 coco어노png 를 만들어줄때 백그라운드 픽셀을 [0,0,0] 으로 해주고있는데,
         #  id값이 0이면 256진법으로 RGB로 변환됐을때 [0,0,0] 이기때문에 백그라운드랑 값이 똑같아져버림!!
         #  (내가 mandible 의 id 를 0으로 했다가 백그라운드랑 똑같이 취급돼버렷지.)
-        #    따라서 다시 backgroundId = name2label['unlabeled_Label'].id 로 해줌.
+        #    따라서 요 한줄은 코멘트아웃하고 다시 backgroundId = name2label['unlabeled_Label'].id 로 해줌.
         # backgroundId = 255 
 
     elif encoding == "trainIds":
