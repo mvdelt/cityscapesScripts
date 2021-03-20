@@ -44,19 +44,43 @@
 
 
 ################################################################################################################
-import numpy as np
-arr = np.array([[1,2,3],[4,5,6],[7,8,9],[5,5,5]])
-# print(arr)
-mask1 = arr==[4,5,6]
-# print(mask1)
-mask2 = arr==5
-# print(mask2)
+# import numpy as np
+# arr = np.array([[1,2,3],[4,5,6],[7,8,9],[5,5,5]])
+# # print(arr)
+# mask1 = arr==[4,5,6]
+# # print(mask1)
+# mask2 = arr==5
+# # print(mask2)
 
-mask3 = [False, True, True, False]
-print(arr[mask3])
-arr[mask3]=[666,777,888] # i. 리스트를 할당해줘도 넘파이어레이로 됨.
-print(arr[mask3])
-print(type(arr[mask3])) # <class 'numpy.ndarray'>
-print(arr)
+# mask3 = [False, True, True, False]
+# print(arr[mask3])
+# arr[mask3]=[666,777,888] # i. 리스트를 할당해줘도 넘파이어레이로 됨.
+# print(arr[mask3])
+# print(type(arr[mask3])) # <class 'numpy.ndarray'>
+# print(arr)
+
+################################################################################################################
+
+
+
+
+
+
+################################################################################################################
+import numpy as np
+
+mask = np.array([[0, 0, 0], [0, 1, 1], [0, 0, 1]])
+print(f'mask:\n{mask}')
+
+hor = np.sum(mask, axis=0)
+print(f'hor:\n{hor}')
+
+print(f'np.nonzero(hor):\n{np.nonzero(hor)}')
+
+hor_idx = np.nonzero(hor)[0]
+x = hor_idx[0]
+width = hor_idx[-1] - x + 1
+
+print(f'hor_idx:{hor_idx}, x:{x}, width:{width}')
 
 ################################################################################################################

@@ -157,7 +157,7 @@ def convert2panoptic(cityscapesPath=None, outputFolder=None, useTrainId=False, s
 
             segmentIds = np.unique(cs_annoPng_arrJ)  # i. ex: [   0    1    2    3    4    5    6 7000 7001 7002 7003 7004 7005 7006 8000 8001 8002 8003 9000] 
             print(f'j) segmentIds = np.unique(cs_annoPng_arrJ): {np.unique(cs_annoPng_arrJ)}')
-            segmInfo = []
+            segmsInfo = []
             # i.21.3.8.00:25) 여기서 segmentIds 를 z-order에 맞게 정렬해줘야겠네.
             #  ->아니지. 지금 cs_annoPng_arrJ(~~instanceIds.png 를 읽어들인거)은 이미 내가정해준 zorder대로 그려진상태니까
             #    이제는 zorder 상관할필요가 없겠네. 그냥 2차원 이미지일 뿐이니까.
@@ -212,7 +212,10 @@ def convert2panoptic(cityscapesPath=None, outputFolder=None, useTrainId=False, s
 
                 area = np.sum(mask) # segment area computation
 
-                # bbox computation for a segment
+                # bbox computation for a segment 
+                # i.21.3.20.21:42) 참고로, 지금 이 계산에서는, 만약 stuff 라서 원 인풋이미지상에서 되게 여기저기 넓게 분포한다해도, bbox는 그걸 다 커버할수있는 최소의 박스로 만들어짐.
+                #  그러니까 예를들어 원 인풋이미지에서 좌하 끝부분 코너, 우상 끝부분 코너 위치에 어던 stuff 가 있다치면, 예를들어 뭐 grass 가 있다면,
+                #  지금 여기서의 bbox는 그걸 다 커버하니까 엄청 커짐. 거의 뭐 이미지 전체를 뒤덮는 bbox 가 되겠지. 
                 hor = np.sum(mask, axis=0)
                 hor_idx = np.nonzero(hor)[0]
                 x = hor_idx[0]
@@ -223,7 +226,12 @@ def convert2panoptic(cityscapesPath=None, outputFolder=None, useTrainId=False, s
                 height = vert_idx[-1] - y + 1
                 bbox = [int(x), int(y), int(width), int(height)]
 
-                segmInfo.append({# i. segmentId 는 ~~instanceIds.png 의 각 픽셀값.
+                # i.21.3.20.21:47) 참고로, thing 카테고리들과 달리, stuff 카테고리들의 경우
+                #  여기저기 산발적으로 여러개의 세그멘트들이 있다해도 그게 다 똑같은 id값을 가지니까, 
+                #  그 모든 세그먼트들이 하나의 "segment_info"(지금 여기서 segmsInfo 에 append 해주는 dict) 에 대응되게 됨.
+                #  참고: createPanopticImgs.py 에선 원래 요 변수명 segmInfo 였는데, 
+                #        s 붙고 안붙고는 매우 중요하기때문에, s 붙여서 segmsInfo 로 내가 바꿔줬음.
+                segmsInfo.append({# i. segmentId 는 ~~instanceIds.png 의 각 픽셀값.
                                  "id": int(segmentId),
                                  # i. Det2에선 이값이 trainId 아닌 그냥id 인걸로 가정하고, 
                                  #  이값을 trainId 로 바꿔서 Det2형식으로 만듦(데이터셋 레지스터해주는 cityscapse_panoptic.py 에서.) /21.3.18.10:00.
@@ -234,7 +242,7 @@ def convert2panoptic(cityscapesPath=None, outputFolder=None, useTrainId=False, s
 
             annotations.append({'image_id': imageIdJ,
                                 'file_name': outAnnoPngNameJ,
-                                "segments_info": segmInfo})
+                                "segments_info": segmsInfo})
 
             Image.fromarray(coco_annoPng_arrJ).save(os.path.join(panopticFolder, outAnnoPngNameJ))
 
