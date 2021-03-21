@@ -63,6 +63,7 @@ import json, os
 COCOFORM_OBJ_DET_ANNOJSON_LOADPATH_J = "/content/datasetsJ/panopticSeg_dentPanoJ/from_cocoannotator_for_panopticSegJ.json"
 
 
+
 # i. 저장할 폴더의 경로. "path/to/ dir of cityscapes formatted ~~polygons.json file for saving"
 # i.21.3.11.10:57) train폴더 만들어줘서 경로 수정함. 지금 일단 train 폴더만 해줫음. val 폴더도 만들어주면 거기에다가도 ~~polygons.json 들 저장해줘야함!
 # i.21.3.11.12:43) 기존의 convertTestJ 에서 panopticSeg_dentPanoJ 로 폴더명 바꿨고, 그안에 gt 및 inputOriPano 두가지 폴더 다시 만들어줬음.
