@@ -61,10 +61,10 @@ import json, os
 # COCOFORM_OBJ_DET_ANNOJSON_LOADPATH_J = r"C:\Users\starriet\Downloads\panopticSeg_dentPanoJ\from_cocoannotator_for_panopticSegJ.json" 
 # i.21.3.14.23:48) 코랩컴에서의 경로로 변경.
 # i.21.3.24.18:24) json파일명에 _forTrain 붙여줌. val 위한 어노json 도 추가하면서, 구분위해.
-COCOFORM_OBJ_DET_ANNOJSON_FORTRAIN_LOADPATH_J = "/content/datasetsJ/panopticSeg_dentPanoJ/from_cocoannotator_for_panopticSegJ_forTrain.json"
+COCOFORM_OBJ_DET_ANNOJSON_FORTRAIN_LOADPATH_J      = "/content/datasetsJ/panopticSeg_dentPanoJ/from_cocoannotator_for_panopticSegJ_forTrain.json"
 
 # i.21.3.24.18:24) val 위한 어노json 도 추가.
-COCOFORM_OBJ_DET_ANNOJSON_FORVAL_LOADPATH_J = "/content/datasetsJ/panopticSeg_dentPanoJ/from_cocoannotator_for_panopticSegJ_forVal.json"
+COCOFORM_OBJ_DET_ANNOJSON_FORVAL_LOADPATH_J        = "/content/datasetsJ/panopticSeg_dentPanoJ/from_cocoannotator_for_panopticSegJ_forVal.json"
 
 
 
@@ -73,11 +73,11 @@ COCOFORM_OBJ_DET_ANNOJSON_FORVAL_LOADPATH_J = "/content/datasetsJ/panopticSeg_de
 # i.21.3.11.10:57) train폴더 만들어줘서 경로 수정함. 지금 일단 train 폴더만 해줫음. val 폴더도 만들어주면 거기에다가도 ~~polygons.json 들 저장해줘야함!
 # i.21.3.11.12:43) 기존의 convertTestJ 에서 panopticSeg_dentPanoJ 로 폴더명 바꿨고, 그안에 gt 및 inputOriPano 두가지 폴더 다시 만들어줬음.
 # i.21.3.14.23:48) 코랩컴에서의 경로로 변경.
-#  TODO: 지금 train 폴더에 대해서만 하드코드해놧는데, train 뿐 아니라 val (또는 나아가서 test) 에 대해서도 해줄것.
+#  지금 train 폴더에 대해서만 하드코드해놧는데, train 뿐 아니라 val (또는 나아가서 test) 에 대해서도 해줄것. 
 CITYSCAPESFORM_POLYGONSJSON_FORTRAIN_SAVEDIRPATH_J = "/content/datasetsJ/panopticSeg_dentPanoJ/gt/train" 
 
 # i.21.3.24.18:28) val 추가.
-CITYSCAPESFORM_POLYGONSJSON_FORVAL_SAVEDIRPATH_J = "/content/datasetsJ/panopticSeg_dentPanoJ/gt/val" 
+CITYSCAPESFORM_POLYGONSJSON_FORVAL_SAVEDIRPATH_J   = "/content/datasetsJ/panopticSeg_dentPanoJ/gt/val" 
 
 
 
