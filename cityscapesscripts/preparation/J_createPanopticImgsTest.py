@@ -67,20 +67,22 @@
 
 
 ################################################################################################################
-import numpy as np
+# import numpy as np
 
-mask = np.array([[0, 0, 0], [0, 1, 1], [0, 0, 1]])
-print(f'mask:\n{mask}')
+# mask = np.array([[0, 0, 0], [0, 1, 1], [0, 0, 1]])
+# print(f'mask:\n{mask}')
 
-hor = np.sum(mask, axis=0)
-print(f'hor:\n{hor}')
+# hor = np.sum(mask, axis=0)
+# print(f'hor:\n{hor}')
 
-print(f'np.nonzero(hor):\n{np.nonzero(hor)}')
+# print(f'np.nonzero(hor):\n{np.nonzero(hor)}')
 
-hor_idx = np.nonzero(hor)[0]
-x = hor_idx[0]
-width = hor_idx[-1] - x + 1
+# hor_idx = np.nonzero(hor)[0]
+# x = hor_idx[0]
+# width = hor_idx[-1] - x + 1
 
-print(f'hor_idx:{hor_idx}, x:{x}, width:{width}')
+# print(f'hor_idx:{hor_idx}, x:{x}, width:{width}')
 
 ################################################################################################################
+
+

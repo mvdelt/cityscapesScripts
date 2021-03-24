@@ -56,7 +56,7 @@ def convert2panoptic(cityscapesPath=None, outputFolder=None, useTrainId=False, s
     #  cityscapesscripts 의 createPanopticImgs.py (바로 지금 이 파일에 해당하지) 의 convert2panoptic 함수에서 
     #  useTrainId=False 로 적용했을때(segment_info 의 "category_id" 가 카테고리의 trainId 가 아닌 그냥id로 셋팅됨)를 가정하고 작동하는거네. 
     #  그래서결국, segment_info["category_id"] 를 카테고리의 그냥id에서 trainId 로 바꿔주는거임.
-    print(f'j) <inputs shoud be> cityscapesPath:None, outputFolder:None, useTrainId:False, setNames:["train"]')
+    print(f'j) <inputs shoud be> cityscapesPath:None, outputFolder:None, useTrainId:False, setNames:[\'train\', \'val\']')
     print(f'j)   <actual inputs> cityscapesPath:{cityscapesPath}, outputFolder:{outputFolder}, useTrainId:{useTrainId}, setNames:{setNames}')
     # Where to look for Cityscapes
     if cityscapesPath is None:
