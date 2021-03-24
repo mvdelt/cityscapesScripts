@@ -275,7 +275,8 @@ def main():
                         help="set names to which apply the function to",
                         nargs='+',
                         # default=["val", "train", "test"],
-                        default=["train"], # i. 일단 train 폴더만 만들어줘놔봤음./21.3.9.10:11
+                        # default=["train"], # i. 일단 train 폴더만 만들어줘놔봤음. /21.3.9.10:11.
+                        default=["train", "val"], # i. 드뎌 val 폴더도 추가. /21.3.24.18:07.
                         type=str)
     args = parser.parse_args()
 
