@@ -89,9 +89,17 @@ def getPrediction( args, groundTruthFile ):
         args.predictionWalk = walk
         print(f'j) 예상 args.predictionWalk: [("임시/폴더의/경로", [~~_pred.png, ~~_pred.png, ...])] 이렇게 튜플하나만있을거임 내예상엔.')
         print(f'j) 실제 args.predictionWalk: {walk}')
+        print(f'j) (예상값 1) len(args.predictionWalk): {len(walk)}')
+        print(f'j) (예상값 500) len(args.predictionWalk[0][1]): {len(walk[0][1])}') 
 
+    # i. groundTruthFile: ~~_gtFine_labelIds.png (내플젝말고 cityscapes플젝의경우.)/21.3.28.9:44. 
+    #  ex: ~~/cityscapes/gtFine/val/frankfurt/frankfurt_000000_000294_gtFine_labelIds.png /21.3.28.9:48. 
+    #
+    # i.21.3.28.10:54) getCsFileInfo 의 리턴값의 정체는 namedtuple 임. 
+    #  CsFile = namedtuple('csFile', ['city', 'sequenceNb', 'frameNb', 'type', 'type2', 'ext']) 
+    #  csFile = CsFile(*['frankfurt', '000000', '000294', 'gtFine', 'labelIds', 'png'])
     csFile = getCsFileInfo(groundTruthFile)
-    filePattern = "{}_{}_{}*.png".format( csFile.city , csFile.sequenceNb , csFile.frameNb )
+    filePattern = "{}_{}_{}*.png".format( csFile.city , csFile.sequenceNb , csFile.frameNb ) # i. ex: "frankfurt_000000_000294*.png" 
 
     predictionFile = None
     for root, filenames in args.predictionWalk:
