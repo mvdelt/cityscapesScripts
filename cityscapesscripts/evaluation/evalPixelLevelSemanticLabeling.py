@@ -65,7 +65,11 @@ if CSUPPORT:
 # <city>_123456_123456*.png
 # for a ground truth filename
 # <city>_123456_123456_gtFine_labelIds.png
-def getPrediction( args, groundTruthFile ):
+def getPrediction( args, groundTruthFile ):  
+    
+    # i. groundTruthFile ex: ~~/cityscapes/gtFine/val/frankfurt/frankfurt_000000_000294_gtFine_labelIds.png 
+    #  즉, 지금 이 getPrediction 함수는 *1개의* gt png파일에 대해 작동하는거임. /21.3.28.11:15.
+
     # determine the prediction path, if the method is first called
     if not args.predictionPath: # i. Det2 의 cityscapes_evaluation.py 에선 args.predictionPath 를 임시폴더(의경로)로 지정해주기때문에 이 if 실행안됨. /21.3.28.9:04.
         rootPath = None
@@ -87,10 +91,11 @@ def getPrediction( args, groundTruthFile ):
         for root, dirnames, filenames in os.walk(args.predictionPath):
             walk.append( (root,filenames) )
         args.predictionWalk = walk
-        print(f'j) 예상 args.predictionWalk: [("임시/폴더의/경로", [~~_pred.png, ~~_pred.png, ...])] 이렇게 튜플하나만있을거임 내예상엔.')
-        print(f'j) 실제 args.predictionWalk: {walk}')
-        print(f'j) (예상값 1) len(args.predictionWalk): {len(walk)}')
-        print(f'j) (예상값 500) len(args.predictionWalk[0][1]): {len(walk[0][1])}') 
+        print(f'j) 예상 args.predictionWalk: [("/임시/폴더의/경로", [~~_pred.png, ~~_pred.png, ...])] 이렇게 튜플하나만있을거임 내예상엔.')
+        print(f'j) 실제 args.predictionWalk: {walk}') # [('/tmp/cityscapes_eval_se7hxspp', ['munster_000150_000019_leftImg8bit_pred.png', 'frankfurt_000001_014221_leftImg8bit_pred.png', ...])]
+        print(f'j) (예상값 1) len(args.predictionWalk): {len(walk)}') # 1 
+        print(f'j) (예상값 500) len(args.predictionWalk[0][1]): {len(walk[0][1])}') # 500 
+        # i. 바로위 print 출력결과들 전부 내 예상대로임. /21.3.28.11:29. 
 
     # i. groundTruthFile: ~~_gtFine_labelIds.png (내플젝말고 cityscapes플젝의경우.)/21.3.28.9:44. 
     #  ex: ~~/cityscapes/gtFine/val/frankfurt/frankfurt_000000_000294_gtFine_labelIds.png /21.3.28.9:48. 
@@ -112,7 +117,7 @@ def getPrediction( args, groundTruthFile ):
     if not predictionFile:
         printError("Found no prediction for ground truth {}".format(groundTruthFile))
 
-    return predictionFile
+    return predictionFile # i. ex: '/임시/폴더의/경로/frankfurt_000000_000294_leftImg8bit_pred.png' 
 
 
 ######################
