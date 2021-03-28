@@ -576,13 +576,13 @@ def evaluatePair(predictionImgFileName, groundTruthImgFileName, confMatrix, inst
         printError("Unable to load " + groundTruthImgFileName)
     # load ground truth instances, if needed
     if args.evalInstLevelScore:
-        # groundTruthInstanceImgFileName = groundTruthImgFileName.replace("labelIds","instanceIds") 
+        groundTruthInstanceImgFileName = groundTruthImgFileName.replace("labelIds","instanceIds") 
         # i. TODO 내플젝에선 바로위의 원래코드 대신 아래코드를 사용해야함!! 파이썬의 스트링.replace 는, replace 할 스트링이 없으면 그냥 원래스트링 그대로를 리턴함.
         #  지금 groundTruthImgFileName 의 값은 내플젝의경우 path/to/~~_labelTrainIds.png 이런식일텐데, 
         #  위의 기존코드 그대로쓰면 바꿔줄 "labelIds" 스트링이 없으니 그냥 아무것도 안바꾸고 그대로 리턴한다는거지.
         #  그러면 ~~_instanceIds.png 를 열어야하는데 그게아니라 ~~_labelTrainIds.png 를 열겠지. 
         #  아마도 그래서 코랩에서 이밸류에이션돌렸을때 thing클래스들의 nIoU 값들이 죄다 0으로 나왔던게 아닌가 싶음. 이제 고쳤으니 함 다시 돌려보자. /21.3.28.21:16. 
-        groundTruthInstanceImgFileName = groundTruthImgFileName.replace("labelTrainIds","instanceIds") 
+        # groundTruthInstanceImgFileName = groundTruthImgFileName.replace("labelTrainIds","instanceIds") 
         try:
             instanceImg = Image.open(groundTruthInstanceImgFileName)
             instanceNp  = np.array(instanceImg)
