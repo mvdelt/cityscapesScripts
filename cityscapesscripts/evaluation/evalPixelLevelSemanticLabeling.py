@@ -67,7 +67,7 @@ if CSUPPORT:
 # <city>_123456_123456_gtFine_labelIds.png
 def getPrediction( args, groundTruthFile ):
     # determine the prediction path, if the method is first called
-    if not args.predictionPath:
+    if not args.predictionPath: # i. Det2 의 cityscapes_evaluation.py 에선 args.predictionPath 를 임시폴더(의경로)로 지정해주기때문에 이 if 실행안됨. /21.3.28.9:04.
         rootPath = None
         if 'CITYSCAPES_RESULTS' in os.environ:
             rootPath = os.environ['CITYSCAPES_RESULTS']
@@ -82,11 +82,13 @@ def getPrediction( args, groundTruthFile ):
         args.predictionPath = rootPath
 
     # walk the prediction path, if not happened yet
-    if not args.predictionWalk:
+    if not args.predictionWalk: # i. Det2 의 cityscapes_evaluation.py 에선 args.predictionWalk 를 None 으로 해주므로, 이 if 실행됨. /21.3.28.9:07. 
         walk = []
         for root, dirnames, filenames in os.walk(args.predictionPath):
             walk.append( (root,filenames) )
         args.predictionWalk = walk
+        print(f'j) 예상 args.predictionWalk: [("임시/폴더의/경로", [~~_pred.png, ~~_pred.png, ...])] 이렇게 튜플하나만있을거임 내예상엔.')
+        print(f'j) 실제 args.predictionWalk: {walk}')
 
     csFile = getCsFileInfo(groundTruthFile)
     filePattern = "{}_{}_{}*.png".format( csFile.city , csFile.sequenceNb , csFile.frameNb )
