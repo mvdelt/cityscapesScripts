@@ -576,7 +576,8 @@ def evaluatePair(predictionImgFileName, groundTruthImgFileName, confMatrix, inst
         printError("Unable to load " + groundTruthImgFileName)
     # load ground truth instances, if needed
     if args.evalInstLevelScore:
-        groundTruthInstanceImgFileName = groundTruthImgFileName.replace("labelIds","instanceIds")
+        # groundTruthInstanceImgFileName = groundTruthImgFileName.replace("labelIds","instanceIds") # i. TODO 내플젝에선 바로아래코드를 사용해야함!! /21.3.28.21:16.
+        groundTruthInstanceImgFileName = groundTruthImgFileName.replace("labelTrainIds","instanceIds") 
         try:
             instanceImg = Image.open(groundTruthInstanceImgFileName)
             instanceNp  = np.array(instanceImg)
