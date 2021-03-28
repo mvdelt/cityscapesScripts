@@ -159,18 +159,47 @@ args.nocol              = colors.ENDC if args.colorized else ""
 args.JSONOutput         = True
 args.quiet              = False
 
+# args.avgClassSize       = {
+#     "bicycle"    :  4672.3249222261 ,
+#     "caravan"    : 36771.8241758242 ,
+#     "motorcycle" :  6298.7200839748 ,
+#     "rider"      :  3930.4788056518 ,
+#     "bus"        : 35732.1511111111 ,
+#     "train"      : 67583.7075812274 ,
+#     "car"        : 12794.0202738185 ,
+#     "person"     :  3462.4756337644 ,
+#     "truck"      : 27855.1264367816 ,
+#     "trailer"    : 16926.9763313609 ,
+# }
+# i.21.3.28.21:44) TODO 내플젝에선 args.avgClassSize 를 위의 cityscapes 플젝에 맞춰놓은값 말고 아래의 내플젝에 맞는 값 써야함.
+#  이 값들의 정체가 뭐지?? 아마도 area 를 평균낸것같은데, 일단 계산할시간없으니 대충 써놔봄.
+#  TODO 이 값들의 정체가 뭔지 확인해서, 계산 제대로 해서 이밸류에이션 다시 돌려줄것. 
+#  TODO 지금보니 gt json파일에는 카테고리가 7개뿐이네?!!! unlabeled 카테고리는 없잖아 생각해보니!!!! 이거 다시 생각해봐라!!!!!!!!! 
 args.avgClassSize       = {
-    "bicycle"    :  4672.3249222261 ,
-    "caravan"    : 36771.8241758242 ,
-    "motorcycle" :  6298.7200839748 ,
-    "rider"      :  3930.4788056518 ,
-    "bus"        : 35732.1511111111 ,
-    "train"      : 67583.7075812274 ,
-    "car"        : 12794.0202738185 ,
-    "person"     :  3462.4756337644 ,
-    "truck"      : 27855.1264367816 ,
-    "trailer"    : 16926.9763313609 ,
+    "unlabeled_Label"    :  1000000 ,
+    "mandible"    : 350000 ,
+    "maxilla" :  80000 ,
+    "sinus"      :  150000 ,
+    "canal"        : 30000 ,
+    "t_normal"      : 50000 ,
+    "t_tx"        : 50000 ,
+    "impl"     :  50000 ,
 }
+
+
+labels = [
+    #       name                     id    trainId   category            catId     hasInstances   ignoreInEval   color(RGB)
+    Label(  'unlabeled_Label'      ,  0 ,        0,  'voidJ'           , 0       , False        , False        , (  0,  0,  0) ),
+    Label(  'mandible'             ,  1 ,        1 , 'boneJ'           , 1       , False        , False        , (135,128,255) ),
+    Label(  'maxilla'              ,  2 ,        2 , 'boneJ'           , 1       , False        , False        , (207,221,255) ),
+    Label(  'sinus'                ,  3 ,        3 , 'sinusJ'          , 2       , False        , False        , (  0,  0,255) ),
+    Label(  'canal'                ,  4 ,        4 , 'canalJ'          , 3       , False        , False        , (255,  0,  0) ),  # i. canal 이 젤 고난이도니까, 나중에 hasInstances True로도 실험해보자 어찌되는지.
+    Label(  't_normal'             ,  5 ,        5 , 'toothJ'          , 4       , True         , False        , ( 66,158, 27) ),
+    Label(  't_tx'                 ,  6 ,        6 , 'toothJ'          , 4       , True         , False        , ( 88,214, 34) ),
+    Label(  'impl'                 ,  7 ,        7 , 'toothJ'          , 4       , True         , False        , (116,255, 56) ),
+]
+
+
 
 # store some parameters for finding predictions in the args variable
 # the values are filled when the method getPrediction is first called
@@ -576,13 +605,16 @@ def evaluatePair(predictionImgFileName, groundTruthImgFileName, confMatrix, inst
         printError("Unable to load " + groundTruthImgFileName)
     # load ground truth instances, if needed
     if args.evalInstLevelScore:
-        groundTruthInstanceImgFileName = groundTruthImgFileName.replace("labelIds","instanceIds") 
+        # groundTruthInstanceImgFileName = groundTruthImgFileName.replace("labelIds","instanceIds") 
         # i. TODO 내플젝에선 바로위의 원래코드 대신 아래코드를 사용해야함!! 파이썬의 스트링.replace 는, replace 할 스트링이 없으면 그냥 원래스트링 그대로를 리턴함.
         #  지금 groundTruthImgFileName 의 값은 내플젝의경우 path/to/~~_labelTrainIds.png 이런식일텐데, 
         #  위의 기존코드 그대로쓰면 바꿔줄 "labelIds" 스트링이 없으니 그냥 아무것도 안바꾸고 그대로 리턴한다는거지.
         #  그러면 ~~_instanceIds.png 를 열어야하는데 그게아니라 ~~_labelTrainIds.png 를 열겠지. 
         #  아마도 그래서 코랩에서 이밸류에이션돌렸을때 thing클래스들의 nIoU 값들이 죄다 0으로 나왔던게 아닌가 싶음. 이제 고쳤으니 함 다시 돌려보자. /21.3.28.21:16. 
-        # groundTruthInstanceImgFileName = groundTruthImgFileName.replace("labelTrainIds","instanceIds") 
+        #   ->일케해주니 죠아래 args.avgClassSize[label.name] 에서 키에러가 뜨네 t_normal 키가 없다고. 
+        #     일케되는게 정상인데, 위의 원래코드썼을땐 이런문제 안생기고 넘어갓엇음;; 걍 넘어간 이유가 잇겟지 조사해보면 나올거임 일단패스. 
+        #     일단 avgClassSize 를 내플젝에 맞게 고쳐주자. /21.3.28.21:42. 
+        groundTruthInstanceImgFileName = groundTruthImgFileName.replace("labelTrainIds","instanceIds") 
         try:
             instanceImg = Image.open(groundTruthInstanceImgFileName)
             instanceNp  = np.array(instanceImg)
