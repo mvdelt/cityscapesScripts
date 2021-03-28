@@ -69,14 +69,15 @@ def getColorEntry(val, args):
 # <city>_<sequenceNb>_<frameNb>_<type>[_<type2>].<ext>
 # This class contains the individual elements as members
 # For the sequence and frame number, the strings are returned, including leading zeros
-CsFile = namedtuple('csFile', ['city', 'sequenceNb', 'frameNb', 'type', 'type2', 'ext'])
+CsFile = namedtuple('csFile', ['city', 'sequenceNb', 'frameNb', 'type', 'type2', 'ext']) 
 
 
+# i. 인풋인자인 fileName 예시: ~~/cityscapes/gtFine/val/frankfurt/frankfurt_000000_000294_gtFine_labelIds.png /21.3.28.9:52. 
 def getCsFileInfo(fileName):
     """Returns a CsFile object filled from the info in the given filename"""
-    baseName = os.path.basename(fileName)
-    parts = baseName.split('_')
-    parts = parts[:-1] + parts[-1].split('.')
+    baseName = os.path.basename(fileName) # i. ex: frankfurt_000000_000294_gtFine_labelIds.png /21.3.28.9:53. 
+    parts = baseName.split('_') # i. ex: ['frankfurt', '000000', '000294', 'gtFine', 'labelIds.png'] /21.3.28.10:09.
+    parts = parts[:-1] + parts[-1].split('.') # i. ex: ['frankfurt', '000000', '000294', 'gtFine', 'labelIds', 'png'] /21.3.28.10:10. 
     if not parts:
         printError('Cannot parse given filename ({}). Does not seem to be a valid Cityscapes file.'.format(fileName))
     if len(parts) == 5:
