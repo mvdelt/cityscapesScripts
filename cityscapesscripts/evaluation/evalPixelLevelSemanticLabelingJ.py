@@ -159,6 +159,8 @@ args.nocol              = colors.ENDC if args.colorized else ""
 args.JSONOutput         = True
 args.quiet              = False
 
+
+
 # args.avgClassSize       = {
 #     "bicycle"    :  4672.3249222261 ,
 #     "caravan"    : 36771.8241758242 ,
@@ -185,19 +187,6 @@ args.avgClassSize       = {
     "t_tx"        : 50000 ,
     "impl"     :  50000 ,
 }
-
-
-labels = [
-    #       name                     id    trainId   category            catId     hasInstances   ignoreInEval   color(RGB)
-    Label(  'unlabeled_Label'      ,  0 ,        0,  'voidJ'           , 0       , False        , False        , (  0,  0,  0) ),
-    Label(  'mandible'             ,  1 ,        1 , 'boneJ'           , 1       , False        , False        , (135,128,255) ),
-    Label(  'maxilla'              ,  2 ,        2 , 'boneJ'           , 1       , False        , False        , (207,221,255) ),
-    Label(  'sinus'                ,  3 ,        3 , 'sinusJ'          , 2       , False        , False        , (  0,  0,255) ),
-    Label(  'canal'                ,  4 ,        4 , 'canalJ'          , 3       , False        , False        , (255,  0,  0) ),  # i. canal 이 젤 고난이도니까, 나중에 hasInstances True로도 실험해보자 어찌되는지.
-    Label(  't_normal'             ,  5 ,        5 , 'toothJ'          , 4       , True         , False        , ( 66,158, 27) ),
-    Label(  't_tx'                 ,  6 ,        6 , 'toothJ'          , 4       , True         , False        , ( 88,214, 34) ),
-    Label(  'impl'                 ,  7 ,        7 , 'toothJ'          , 4       , True         , False        , (116,255, 56) ),
-]
 
 
 
