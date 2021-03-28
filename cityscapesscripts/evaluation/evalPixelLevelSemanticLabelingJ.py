@@ -173,16 +173,28 @@ args.quiet              = False
 #     "truck"      : 27855.1264367816 ,
 #     "trailer"    : 16926.9763313609 ,
 # }
-# i.21.3.28.21:44) TODO 내플젝에선 args.avgClassSize 를 위의 cityscapes 플젝에 맞춰놓은값 말고 아래의 내플젝에 맞는 값 써야함.
+# i.21.3.28.21:44) 
+#  TODO 내플젝에선 args.avgClassSize 를 위의 cityscapes 플젝에 맞춰놓은값 말고 아래의 내플젝에 맞는 값 써야함.
 #  이 값들의 정체가 뭐지?? 아마도 area 를 평균낸것같은데, 일단 계산할시간없으니 대충 써놔봄.
+#   -> i. 걍 직관적으로 내가 생각하는게 맞는듯함. 
+#      코드 살펴보니, 아마도, 각 thing 클래스의 모든 gt 인스턴스 area 들을 평균낸 값인듯.(걍 내가생각하는대로임) /21.3.29.0:05. 
 #  TODO 이 값들의 정체가 뭔지 확인해서, 계산 제대로 해서 이밸류에이션 다시 돌려줄것. 
-#  TODO 지금보니 gt json파일에는 카테고리가 7개뿐이네?!!! unlabeled 카테고리는 없잖아 생각해보니!!!! 이거 다시 생각해봐라!!!!!!!!! 
+#  TODO 기존 cityscapes 데이터로 이밸류에이션 돌려보면 IoU 값들보다 nIoU 값들이 조금씩 더 작은데,
+#   지금 요 avgClassSize 대충임시로정한값으로 내플젝 돌려보니 nIoU 값이 드뎌 0이아닌 어떤 값들이 나오긴 하는데, IoU 값들보다 조금씩 더 크다. 
+#   다시 제대로된 값으로 해준뒤에 IoU 랑 nIoU 크기비교 해보고, 항상 IoU > nIoU 인지 생각해보자. 
+#  vTODO 지금보니 gt json파일에는 카테고리가 7개뿐이네?!!! unlabeled 카테고리는 없잖아 생각해보니!!!! 이거 다시 생각해봐라!!!!!!!!! 
+#   -> i. ㅡㅡ;; 먼소리냐 어차피 gt png파일들(~~instanceIds.png 등의) 생성해줄때 기본적으로 백그라운드값 설정한뒤에 그려주잖아;;; 
+#      coco-annotator 에서 다운받은 "시초" 어노json파일에서 백그라운드에대한 어노테이션정보가 없더라도 gt png파일들 생성시에는 다 생기는거지. 
+#      백그라운드 픽셀값 셋팅한뒤에 각 폴리곤들을 그려주니까. /21.3.29.0:01. 
+#
+# i.21.3.29.0:02) thing 클래스들에 대한 정보만 넣어주면 됨. 
+#  지금현재는 내플젝에서 thing클래스들이 요 세개니까 얘네들의 정보만 넣어주면 됨.
 args.avgClassSize       = {
-    "unlabeled_Label"    :  1000000 ,
-    "mandible"    : 350000 ,
-    "maxilla" :  80000 ,
-    "sinus"      :  150000 ,
-    "canal"        : 30000 ,
+    # "unlabeled_Label"    :  1000000 ,
+    # "mandible"    : 350000 ,
+    # "maxilla" :  80000 ,
+    # "sinus"      :  150000 ,
+    # "canal"        : 30000 ,
     "t_normal"      : 50000 ,
     "t_tx"        : 50000 ,
     "impl"     :  50000 ,
@@ -490,6 +502,15 @@ def printCategoryScores(scoreDict, instScoreDict, args):
 
 # Evaluate image lists pairwise.
 def evaluateImgLists(predictionImgList, groundTruthImgList, args):
+
+    # i.21.3.29.0:39) predictionImgList 는 말그대로 모델이 프레딕션한, *인스턴스id* 들이 그려진 png의 경로들의 리스트인 반면,
+    #  groundTruthImgList 는 인스턴스id 가 아닌 ~~_labelTrainIds.png 즉 *클래스id(카테고리id)* 가 그려진 png의 경로들의 리스트임.
+    #  (참고로, 일반적으로는 클래스라는 표현이나 카테고리라는 표현이나 똑같은의미로 쓰이는데, 
+    #   cityscapes 의 labels.py 에서는 'category' 가 슈퍼카테고리를 의미함. 
+    #   예를들어 차,자전거 등을 모두 vehicle 이라고한다면 vehicle 이 슈퍼카테고리일건데 
+    #   이걸 cityscapes 에서는 'category' 라고 한다는거지. 나중에 헷갈릴까봐 적어둠.)
+
+
     if len(predictionImgList) != len(groundTruthImgList):
         printError("List of images for prediction and groundtruth are not of equal size.")
     confMatrix    = generateMatrix(args)
@@ -647,7 +668,9 @@ def evaluatePair(predictionImgFileName, groundTruthImgFileName, confMatrix, inst
         for category in instanceStats["categories"]:
             categoryMasks[category] = np.in1d( predictionNp , instanceStats["categories"][category]["labelIds"] ).reshape(predictionNp.shape)
 
-        instList = np.unique(instanceNp[instanceNp > 1000])
+        # i.21.3.28.23:44) TODO Q: instanceNp 는 단지 ~~_instanceIds.png 를 넘파이어레이로 만든것일뿐일텐데,
+        #  인스턴스id 가 1000 일수도 있는데...??? >1000 이아니고 >999 로 해줘야하지않나??? 뭐 일단 cityscapes 나 내플젝에서는 상관없을것같지만. 
+        instList = np.unique(instanceNp[instanceNp > 1000]) 
         for instId in instList:
             labelId = int(instId/1000)
             label = id2label[ labelId ]
@@ -657,7 +680,10 @@ def evaluatePair(predictionImgFileName, groundTruthImgFileName, confMatrix, inst
             mask = instanceNp==instId
             instSize = np.count_nonzero( mask )
 
-            tp = np.count_nonzero( predictionNp[mask] == labelId )
+            # i. instanceNp 는 ~~_instanceIds.png 의 넘파이어레이. 
+            #  predictionNp 는 모델이 프레딕션한, (임시폴더의) ~~_pred.png 의 넘파이어레이. 
+            #  즉, 둘다 인스턴스id 정보가 담겨있음. /21.3.29.0:52.
+            tp = np.count_nonzero( predictionNp[mask] == labelId )  
             fn = instSize - tp
 
             weight = args.avgClassSize[label.name] / float(instSize)
