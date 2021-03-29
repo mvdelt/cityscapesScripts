@@ -507,8 +507,8 @@ def evaluateImgLists(predictionImgList, groundTruthImgList, args):
     #  groundTruthImgList 는 인스턴스id 가 아닌 ~~_labelTrainIds.png 즉 *클래스id(카테고리id)* 가 그려진 png의 경로들의 리스트임.
     #  (참고로, 일반적으로는 클래스라는 표현이나 카테고리라는 표현이나 똑같은의미로 쓰이는데, 
     #   cityscapes 의 labels.py 에서는 'category' 가 슈퍼카테고리를 의미함. 
-    #   예를들어 차,자전거 등을 모두 vehicle 이라고한다면 vehicle 이 슈퍼카테고리일건데 
-    #   이걸 cityscapes 에서는 'category' 라고 한다는거지. 나중에 헷갈릴까봐 적어둠.)
+    #   예를들어 차,오토바이,자전거 등을 모두 vehicle 이라고한다면 vehicle 이 슈퍼카테고리일건데 
+    #   이걸 cityscapes 에서는 'category' 라고 명명했다는거지. labels.py 보면 그러함. 나중에 헷갈릴까봐 적어둠.) 
 
 
     if len(predictionImgList) != len(groundTruthImgList):
