@@ -1,5 +1,17 @@
 #!/usr/bin/python
 #
+#
+##################################################################################################################### 
+# i.21.3.29.12:42) 이 파일 설명:
+#  evalPixelLevelSemanticLabeling.py 를 
+#  내플젝(panoptic deeplab 이용해서 치과파노라마 panoptic segmentation) 에 맞게 수정해주기위해 
+#  전날(3월28일)에 만든 파일. 
+#  evalPixelLevelSemanticLabeling.py 에 계속 코멘트달고 이것저것 수정하다가, 
+#  cityscapes 플젝 돌릴때랑 달라지는부분 있어서 
+#  그냥 그파일 그대로 복사한뒤에 내플젝에맞게 수정해주려고 만들었음. 
+#####################################################################################################################
+#
+# 
 # The evaluation script for pixel-level semantic labeling.
 # We use this script to evaluate your approach on the test set.
 # You can use the script to evaluate on the validation set.
@@ -666,7 +678,7 @@ def evaluatePair(predictionImgFileName, groundTruthImgFileName, confMatrix, inst
         # Generate category masks
         categoryMasks = {}
         for category in instanceStats["categories"]:
-            categoryMasks[category] = np.in1d( predictionNp , instanceStats["categories"][category]["labelIds"] ).reshape(predictionNp.shape)
+            categoryMasks[category] = np.in1d( predictionNp , instanceStats["categories"][category]["labelIds"] ).reshape(predictionNp.shape) 
 
         # i.21.3.28.23:44) TODO Q: instanceNp 는 단지 ~~_instanceIds.png 를 넘파이어레이로 만든것일뿐일텐데,
         #  인스턴스id 가 1000 일수도 있는데...??? >1000 이아니고 >999 로 해줘야하지않나??? 뭐 일단 cityscapes 나 내플젝에서는 상관없을것같지만. 
