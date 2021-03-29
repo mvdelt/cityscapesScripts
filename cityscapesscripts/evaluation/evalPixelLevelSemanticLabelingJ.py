@@ -190,6 +190,7 @@ args.quiet              = False
 #  이 값들의 정체가 뭐지?? 아마도 area 를 평균낸것같은데, 일단 계산할시간없으니 대충 써놔봄.
 #   -> i. 걍 직관적으로 내가 생각하는게 맞는듯함. 
 #      코드 살펴보니, 아마도, 각 thing 클래스의 모든 gt 인스턴스 area 들을 평균낸 값인듯.(걍 내가생각하는대로임) /21.3.29.0:05. 
+#   -> i. 아닌듯!! gt "인스턴스" area 평균이 아니고, gt "클래스"(인스턴스들의 뭉탱이)의 area 평균인듯. 말그대로 avg"ClassSize" 임. /21.3.30.0:26.
 #  TODO 이 값들의 정체가 뭔지 확인해서, 계산 제대로 해서 이밸류에이션 다시 돌려줄것. 
 #  TODO 기존 cityscapes 데이터로 이밸류에이션 돌려보면 IoU 값들보다 nIoU 값들이 조금씩 더 작은데,
 #   지금 요 avgClassSize 대충임시로정한값으로 내플젝 돌려보니 nIoU 값이 드뎌 0이아닌 어떤 값들이 나오긴 하는데, IoU 값들보다 조금씩 더 크다. 
@@ -515,13 +516,16 @@ def printCategoryScores(scoreDict, instScoreDict, args):
 # Evaluate image lists pairwise.
 def evaluateImgLists(predictionImgList, groundTruthImgList, args):
 
-    # i.21.3.29.0:39) predictionImgList 는 말그대로 모델이 프레딕션한, *인스턴스id* 들이 그려진 png의 경로들의 리스트인 반면,
-    #  groundTruthImgList 는 인스턴스id 가 아닌 ~~_labelTrainIds.png 즉 *클래스id(카테고리id)* 가 그려진 png의 경로들의 리스트임.
+    # i.21.3.29.0:39) -> # i.21.3.29.22:49) 잘못알던부분 수정 (pred 나 gt 나 둘다 클래스id 들을 담고있음). 
+    #  predictionImgList 는 모델이 프레딕션한 클래스id (label.trainId 말고 그냥 label.id) 들이 그려져있고 VOID는 255로 그려진 
+    #  png 의 경로들의 리스트임.(모델의 인퍼런스 아웃풋에서 각 이미지에해당하는 dict 의 "sem_seg" 의 정보에 따라 그려준것임.) 
+    #  groundTruthImgList 는 내플젝의경우 ~~_labelTrainIds.png 즉 클래스id(인데 train용 id (trainId)) 가 그려진 gt png 의 경로들의 리스트임. 
+    #  (내플젝에선 현재는 label.trainId 랑 label.id 랑 똑같기때문에 상관없음. 
+    #   만약 달랐으면, gt 로 사용할 ~~_labelIds.png 를 만들어주든지, 아니면 모델이 프레딕션한거 png 로 그려줄때 label.trainId 로 그려주면 되지.) 
     #  (참고로, 일반적으로는 클래스라는 표현이나 카테고리라는 표현이나 똑같은의미로 쓰이는데, 
     #   cityscapes 의 labels.py 에서는 'category' 가 슈퍼카테고리를 의미함. 
-    #   예를들어 차,오토바이,자전거 등을 모두 vehicle 이라고한다면 vehicle 이 슈퍼카테고리일건데 
-    #   이걸 cityscapes 에서는 'category' 라고 명명했다는거지. labels.py 보면 그러함. 나중에 헷갈릴까봐 적어둠.) 
-
+    #   예를들어 차,자전거 등을 모두 vehicle 이라고한다면 vehicle 이 슈퍼카테고리일건데 
+    #   이걸 cityscapes 에서는 'category' 라고 한다는거지. 나중에 헷갈릴까봐 적어둠.) 
 
     if len(predictionImgList) != len(groundTruthImgList):
         printError("List of images for prediction and groundtruth are not of equal size.")
@@ -617,12 +621,12 @@ def evaluatePair(predictionImgFileName, groundTruthImgFileName, confMatrix, inst
     # Loading all resources for evaluation.
     try:
         predictionImg = Image.open(predictionImgFileName)
-        predictionNp  = np.array(predictionImg)
+        predictionNp  = np.array(predictionImg) ######################## i.21.3.29.23:49)
     except:
         printError("Unable to load " + predictionImgFileName)
     try:
         groundTruthImg = Image.open(groundTruthImgFileName)
-        groundTruthNp = np.array(groundTruthImg)
+        groundTruthNp = np.array(groundTruthImg) ######################## i.21.3.29.23:49)
     except:
         printError("Unable to load " + groundTruthImgFileName)
     # load ground truth instances, if needed
@@ -639,7 +643,7 @@ def evaluatePair(predictionImgFileName, groundTruthImgFileName, confMatrix, inst
         groundTruthInstanceImgFileName = groundTruthImgFileName.replace("labelTrainIds","instanceIds") 
         try:
             instanceImg = Image.open(groundTruthInstanceImgFileName)
-            instanceNp  = np.array(instanceImg)
+            instanceNp  = np.array(instanceImg) ######################## i.21.3.29.23:49)
         except:
             printError("Unable to load " + groundTruthInstanceImgFileName)
 
@@ -660,7 +664,9 @@ def evaluatePair(predictionImgFileName, groundTruthImgFileName, confMatrix, inst
         # using cython
         confMatrix = addToConfusionMatrix.cEvaluatePair(predictionNp, groundTruthNp, confMatrix, args.evalLabels)
     else:
-        # the slower python way 
+        # the slower python way     
+        # i.21.3.30.0:09) ->일단 요 느린 파이썬방식 코드라도 이해완료. confMatrix 의 각 칸에 픽셀갯수 넣어주는 작업 하는거임. 
+        #  (참고로 컨퓨젼매트릭스는 gt 클래스들과 pred된 클래스들에 대해 각각의 경우에 픽셀갯수 넣어준 매트릭스. 클래스갯수 x 클래스갯수 만큼 칸이 있는거지.) 
         encoding_value = max(groundTruthNp.max(), predictionNp.max()).astype(np.int32) + 1
         encoded = (groundTruthNp.astype(np.int32) * encoding_value) + predictionNp
 
@@ -692,10 +698,10 @@ def evaluatePair(predictionImgFileName, groundTruthImgFileName, confMatrix, inst
             mask = instanceNp==instId
             instSize = np.count_nonzero( mask )
 
-            # i. instanceNp 는 ~~_instanceIds.png 의 넘파이어레이. 
-            #  predictionNp 는 모델이 프레딕션한, (임시폴더의) ~~_pred.png 의 넘파이어레이. 
-            #  즉, 둘다 인스턴스id 정보가 담겨있음. /21.3.29.0:52.
-            tp = np.count_nonzero( predictionNp[mask] == labelId )  
+            # i. instanceNp 는 ~~_instanceIds.png 의 넘파이어레이. 인스턴스id 들의 정보가 들어있음. 
+            #  predictionNp 는 모델의 프레딕션결과중 "sem_seg" 정보를 이용한, (임시폴더의) ~~_pred.png 의 넘파이어레이. 
+            #  predictionNp 에는 인스턴스id 가 아닌, 클래스id 들의 정보가 담겨있음. /21.3.29.0:52. -> 틀린내용 수정. /21.3.30.0:29. 
+            tp = np.count_nonzero( predictionNp[mask] == labelId ) 
             fn = instSize - tp
 
             weight = args.avgClassSize[label.name] / float(instSize)
