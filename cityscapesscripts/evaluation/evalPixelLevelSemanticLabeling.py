@@ -563,6 +563,9 @@ def evaluateImgLists(predictionImgList, groundTruthImgList, args):
 # Main evaluation method. Evaluates pairs of prediction and ground truth
 # images which are passed as arguments.
 def evaluatePair(predictionImgFileName, groundTruthImgFileName, confMatrix, instanceStats, perImageStats, args):
+
+    print(f'j) gtImgFilePath: {groundTruthImgFileName}')
+
     # Loading all resources for evaluation.
     try:
         predictionImg = Image.open(predictionImgFileName)
@@ -646,7 +649,10 @@ def evaluatePair(predictionImgFileName, groundTruthImgFileName, confMatrix, inst
             #  ->아닌데... 걍 각 인스턴스의 area 평균이 맞을듯...아닌가?? /21.3.30.11:09. 
             #  ->음. 생각완료. 각 인스턴스의 area 평균이 맞음. 이제 코랩돌린결과 확인해보자. weight 이 1근처일거임. 
             #    지금 요 for문에서는 각 인스턴스마다 tp fn 등의 값을 '누적'시켜 더해주고잇고(1개 이미지, 즉 1개 gt,pred 쌍에 대해서),
-            #    이 evaluatePair 함수는 또다시 (더 상위의)for문 안에서 실행되어 모든 gt,pred 쌍에 대해서 작동하고있지. /21.3.30.11:26. 
+            #    이 evaluatePair 함수는 또다시 (더 상위의)for문 안에서 실행되어 모든 gt,pred 쌍에 대해서 작동하고있지. 
+            #    FP 는 나중에 따로 계산해줄테고. 
+            #    iIoU 계산 관련해서는, cityscapes 공홈 벤치마크 페이지의 Pixel-Level Semantic Labeling Task 설명 참고하삼. /21.3.30.11:26. 
+            #  ->weight값들이 1근처는 아니지만 0.1,0.2 등 엄청 작은값들도 있는걸로봐서는 내생각이 맞는듯. 논리적으로도 내생각이 맞고. /21.3.30.11:38.
             print(f'j) weight = avgClassSize[{label.name}]({args.avgClassSize[label.name]}) / instSize({instSize}) : {weight}') 
             tpWeighted = float(tp) * weight
             fnWeighted = float(fn) * weight

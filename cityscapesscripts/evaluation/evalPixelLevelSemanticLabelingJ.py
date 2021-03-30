@@ -682,9 +682,9 @@ def evaluatePair(predictionImgFileName, groundTruthImgFileName, confMatrix, inst
 
     if args.evalInstLevelScore:
         # Generate category masks
-        categoryMasks = {}
+        predCategoryMasksJ = {}
         for category in instanceStats["categories"]:
-            categoryMasks[category] = np.in1d( predictionNp , instanceStats["categories"][category]["labelIds"] ).reshape(predictionNp.shape) 
+            predCategoryMasksJ[category] = np.in1d( predictionNp , instanceStats["categories"][category]["labelIds"] ).reshape(predictionNp.shape) 
 
         # i.21.3.28.23:44) TODO Q: instanceNp 는 단지 ~~_instanceIds.png 를 넘파이어레이로 만든것일뿐일텐데,
         #  인스턴스id 가 1000 일수도 있는데...??? >1000 이아니고 >999 로 해줘야하지않나??? 뭐 일단 cityscapes 나 내플젝에서는 상관없을것같지만. 
@@ -719,7 +719,7 @@ def evaluatePair(predictionImgFileName, groundTruthImgFileName, confMatrix, inst
             category = label.category
             if category in instanceStats["categories"]:
                 catTp = 0
-                catTp = np.count_nonzero( np.logical_and( gtInstMaskJ , categoryMasks[category] ) )
+                catTp = np.count_nonzero( np.logical_and( gtInstMaskJ , predCategoryMasksJ[category] ) )
                 catFn = instSize - catTp
 
                 catTpWeighted = float(catTp) * weight
