@@ -564,7 +564,7 @@ def evaluateImgLists(predictionImgList, groundTruthImgList, args):
 # images which are passed as arguments.
 def evaluatePair(predictionImgFileName, groundTruthImgFileName, confMatrix, instanceStats, perImageStats, args):
 
-    print(f'j) gtImgFilePath: {groundTruthImgFileName}')
+    print(f'j) gtImgFile: {groundTruthImgFileName}')
 
     # Loading all resources for evaluation.
     try:
