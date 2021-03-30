@@ -118,11 +118,24 @@ args = CArgs()
 if 'CITYSCAPES_DATASET' in os.environ:
     args.cityscapesPath = os.environ['CITYSCAPES_DATASET']
 else:
+    # i.21.3.30.15:54) 지금보니 코랩의 내플젝의경우 요거 적용됐겠네.
+    # (코랩에서 cityscapes 데이터셋 돌려줄때는 환경변수 'CITYSCAPES_DATASET' 설정했었는데, 
+    #  내플젝돌릴땐 안했지. 트레이닝시킬 데이터 준비하는 파일들에서 하드코딩으로 경로들 지정해줬었지.) 
+    #  난 트레이닝시킬때 준비해주는 파일들에 내플젝에맞게 경로 지정해줘서
+    #  환경변수 'CITYSCAPES_DATASET' 이거 셋팅 안해줘도 되는줄 알았는데(트레이닝 및 시각화결과출력 까지는 그래도됐지),
+    #  이제 이밸류에이션 파일들 돌려주려면 경로 또 설정 해줘야겠네. 
+    #  환경변수 'CITYSCAPES_DATASET' 이용해서 지정해주든지, 
+    #  각 파일들에 하드코딩시키든지(예를들어 바로아랫줄코드를 바꾸는 식으로) 어떻게든. 
     args.cityscapesPath = os.path.join(os.path.dirname(os.path.realpath(__file__)),'..','..')
 
 # Parameters that should be modified by user
 args.exportFile         = os.path.join( args.cityscapesPath , "evaluationResults" , "resultInstanceLevelSemanticLabeling.json" )
 args.groundTruthSearch  = os.path.join( args.cityscapesPath , "gtFine" , "val" , "*", "*_gtFine_instanceIds.png" )
+# i.21.3.30.15:45) ->args.groundTruthSearch 는 이 파일의 main() 메서드에서만 사용함.
+#  지금 Det2 의 cityscapes_evaluation.py 에서는 이 파일의 evaluateImgLists 를 사용하고있기때문에 
+#  args.groundTruthSearch 값을 내플젝에맞게 안바꿔줘도 잘 작동하는것임.
+#  (Det2 에서 이 파일의 evaluateImgLists 사용해주기 전에 gt 파일들을 이미 찾아서 넣어주고있지. 난 그부분을 내플젝에맞게 바꿔준거고.) 
+
 
 # overlaps for evaluation
 args.overlaps           = np.arange(0.5,1.,0.05)
