@@ -643,7 +643,7 @@ def evaluatePair(predictionImgFileName, groundTruthImgFileName, confMatrix, inst
             # i. avgClassSize 가 각 인스턴스의 area 평균이 맞는지 체크해보려고. 맞다면 weight 이 1 근처겠지. /21.3.30.10:26.  
             #  ->아니다. cityscapes 공홈 벤치마크 페이지의 Pixel-Level Semantic Labeling Task 의 iIoU 설명 수식보고 생각해보니 
             #    각 클래스의 전체 인스턴스들 area 합의 평균일듯. /21.3.30.10:55. 
-            print(f'j) weight = args.avgClassSize[label.name] / float(instSize) : {weight}')  
+            print(f'j) weight = avgClassSize[{label.name}]({args.avgClassSize[label.name]}) / instSize({instSize}) : {weight}') 
             tpWeighted = float(tp) * weight
             fnWeighted = float(fn) * weight
 
