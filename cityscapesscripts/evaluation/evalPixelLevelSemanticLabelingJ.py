@@ -155,6 +155,7 @@ else:
     #  이제 이밸류에이션 파일들 돌려주려면 경로 또 설정 해줘야겠네. 
     #  환경변수 'CITYSCAPES_DATASET' 이용해서 지정해주든지, 
     #  각 파일들에 하드코딩시키든지(예를들어 바로아랫줄코드를 바꾸는 식으로) 어떻게든. 
+    #  근데 지금 이 args.cityscapesPath 는 결과 저장용인듯하니 당장 안바꿔줘도 작동에 문제는 없겠네. 
     args.cityscapesPath = os.path.join(os.path.dirname(os.path.realpath(__file__)),'..','..')
 
 if 'CITYSCAPES_EXPORT_DIR' in os.environ:
