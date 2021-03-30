@@ -695,13 +695,16 @@ def evaluatePair(predictionImgFileName, groundTruthImgFileName, confMatrix, inst
             if label.ignoreInEval:
                 continue
 
-            mask = instanceNp==instId
-            instSize = np.count_nonzero( mask )
+            # i. 좌변원래변수명은 mask. 
+            #  명확의미위해 (변수명 gtInstMaskJ 의)앞에 gt 붙여줬지만, 사실 여기선 모델의 아웃풋중 sem seg 정보만 이용중이라
+            #  인스턴스의 mask 라면 gt (~~_instanceIds.png) 에서부터 온 정보밖에없음. /21.3.30.9:44. 
+            gtInstMaskJ = instanceNp==instId  
+            instSize = np.count_nonzero( gtInstMaskJ )
 
             # i. instanceNp 는 ~~_instanceIds.png 의 넘파이어레이. 인스턴스id 들의 정보가 들어있음. 
             #  predictionNp 는 모델의 프레딕션결과중 "sem_seg" 정보를 이용한, (임시폴더의) ~~_pred.png 의 넘파이어레이. 
             #  predictionNp 에는 인스턴스id 가 아닌, 클래스id 들의 정보가 담겨있음. /21.3.29.0:52. -> 틀린내용 수정. /21.3.30.0:29. 
-            tp = np.count_nonzero( predictionNp[mask] == labelId ) 
+            tp = np.count_nonzero( predictionNp[gtInstMaskJ] == labelId ) 
             fn = instSize - tp
 
             weight = args.avgClassSize[label.name] / float(instSize)
@@ -716,7 +719,7 @@ def evaluatePair(predictionImgFileName, groundTruthImgFileName, confMatrix, inst
             category = label.category
             if category in instanceStats["categories"]:
                 catTp = 0
-                catTp = np.count_nonzero( np.logical_and( mask , categoryMasks[category] ) )
+                catTp = np.count_nonzero( np.logical_and( gtInstMaskJ , categoryMasks[category] ) )
                 catFn = instSize - catTp
 
                 catTpWeighted = float(catTp) * weight

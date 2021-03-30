@@ -640,6 +640,8 @@ def evaluatePair(predictionImgFileName, groundTruthImgFileName, confMatrix, inst
             fn = instSize - tp
 
             weight = args.avgClassSize[label.name] / float(instSize)
+            # i. avgClassSize 가 각 인스턴스의 area 평균이 맞는지 체크해보려고. 맞다면 weight 이 1 근처겠지. /21.3.30.10:26. 
+            print(f'j) weight = args.avgClassSize[label.name] / float(instSize) : {weight}')  
             tpWeighted = float(tp) * weight
             fnWeighted = float(fn) * weight
 
