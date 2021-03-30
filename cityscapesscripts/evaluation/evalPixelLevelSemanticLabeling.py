@@ -643,7 +643,7 @@ def evaluatePair(predictionImgFileName, groundTruthImgFileName, confMatrix, inst
             fn = instSize - tp
 
             weight = args.avgClassSize[label.name] / float(instSize)
-            # i. avgClassSize 가 각 인스턴스의 area 평균이 맞는지 체크해보려고. 맞다면 weight 이 1 근처겠지. /21.3.30.10:26.  
+            # i. avgClassSize 가 각 인스턴스의 area 평균이 맞는지 체크해보려고 print 출력좀 해줘봄. 맞다면 weight 이 1 근처겠지. /21.3.30.10:26.  
             #  ->아니다. cityscapes 공홈 벤치마크 페이지의 Pixel-Level Semantic Labeling Task 의 iIoU 설명 수식보고 생각해보니 
             #    각 클래스의 전체 인스턴스들 area 합의 평균일듯. /21.3.30.10:55. 
             #  ->아닌데... 걍 각 인스턴스의 area 평균이 맞을듯...아닌가?? /21.3.30.11:09. 
@@ -653,6 +653,9 @@ def evaluatePair(predictionImgFileName, groundTruthImgFileName, confMatrix, inst
             #    FP 는 나중에 따로 계산해줄테고. 
             #    iIoU 계산 관련해서는, cityscapes 공홈 벤치마크 페이지의 Pixel-Level Semantic Labeling Task 설명 참고하삼. /21.3.30.11:26. 
             #  ->weight값들이 1근처는 아니지만 0.1,0.2 등 엄청 작은값들도 있는걸로봐서는 내생각이 맞는듯. 논리적으로도 내생각이 맞고. /21.3.30.11:38.
+            # i.21.3.30.12:19) 참고로, tp 랑 fn 은 죄다 누적해서 더해줄거면 어차피 클래스레벨에서의 tp 와 fn 과 동일해질테니
+            #  인스턴스레벨에서 해줄필요없고 걍 클래스레벨에서 계산하면 되는데 뭐하러 이 값들을 계산해주나 했는데, 
+            #  실제로 요 tp, fn 은 사용되는곳이 없네. tpWeighted, fnWeighted 만 사용됨. 
             print(f'j) weight = avgClassSize[{label.name}]({args.avgClassSize[label.name]}) / instSize({instSize}) : {weight}') 
             tpWeighted = float(tp) * weight
             fnWeighted = float(fn) * weight
