@@ -40,8 +40,11 @@ for label in labels:
         # areaSum
         gtArr_labelIds = gtArr//1000 # i. thing 들의 labelId들만 남고, stuff 등 나머지애들은 0 이 됨. 
         labelIds, areaSums = np.unique(gtArr_labelIds, return_counts=True) # labelIds 에는 thing 들의 labelId들만 있고, 나머지값들은 0. 
+        print(f'j) areaSums: {areaSums}') 
         idx = np.where(labelIds==label.id)[0][0]
+        print(f'j) idx: {idx}')
         areaSum = areaSums[idx]
+        print(f'j) areaSums[idx]: {areaSums[idx]}')
         areaSum_and_insCnt[label.name][0] += areaSum
         # insCnt
         insIds = np.unique(gtArr)
@@ -52,7 +55,7 @@ for label in labels:
 avgClassSizeJ = {}
 for labelName, asum_inscnt in areaSum_and_insCnt.items():
     avgClassSizeJ[labelName] = asum_inscnt[0]/asum_inscnt[1]
-print(f'j) avgClassSizeJ by 방법1: {avgClassSizeJ}')
+print(f'j) avgClassSizeJ   by 방법1: {avgClassSizeJ}')
 
 
 # i.21.3.31.23:55) 방법 2. 
@@ -76,7 +79,7 @@ for fpath in gtList:
 avgClassSizeJ_2 = {}
 for labelName, asum_inscnt in areaSum_and_insCnt_2.items():
     avgClassSizeJ_2[labelName] = asum_inscnt[0]/asum_inscnt[1]
-print(f'j) avgClassSizeJ_2 by 방법1: {avgClassSizeJ_2}')
+print(f'j) avgClassSizeJ_2 by 방법2: {avgClassSizeJ_2}')
 
 
 
