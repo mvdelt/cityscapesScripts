@@ -16,8 +16,9 @@ import glob
 import numpy as np
 from PIL import Image 
 # i.21.4.1.1:28) TODO Q: 내컴에선 일케 임포트하면 되는데, 코랩에서 임포트하면 일케하면 못찾고 밑밑줄처럼 임포트해줘야 인식하네. 왜지??? 
+#  ->코랩에서 !python path/to/~~.py 이런식으로 할때는 또 바로아랫줄처럼 적어놔야 임포트되네... 지금 졸려서 담에다시생각..;;
 from cityscapesscripts.helpers.labels import labels, id2label
-# from cityscapesScripts.cityscapesscripts.helpers.labels import labels, id2label
+# from cityscapesScripts.cityscapesscripts.helpers.labels import labels, id2label  # i. <-코랩의 셀에다가 작성할땐 이렇게 적어줘야 임포트된다. /21.4.1.1:44. 
 
 
 # MYROOTDIRPATH_J = "/content/datasetsJ/panopticSeg_dentPanoJ"
@@ -45,11 +46,13 @@ for label in labels:
         print(f'j) idx: {idx}')
         areaSum = areaSums[idx]
         print(f'j) areaSums[idx]: {areaSums[idx]}')
+        print(f'j) areaSum_and_insCnt[label.name]: {areaSum_and_insCnt[label.name]}')
         areaSum_and_insCnt[label.name][0] += areaSum
+        print(f'j) areaSum_and_insCnt[label.name]: {areaSum_and_insCnt[label.name]}')
         # insCnt
         insIds = np.unique(gtArr)
         labelIds, insCnts = np.unique(insIds//1000, return_counts=True) 
-        idx = np.where(labelIds==label.id)
+        idx = np.where(labelIds==label.id)[0][0] 
         insCnt = insCnts[idx]
         areaSum_and_insCnt[label.name][1] += insCnt
 avgClassSizeJ = {}
