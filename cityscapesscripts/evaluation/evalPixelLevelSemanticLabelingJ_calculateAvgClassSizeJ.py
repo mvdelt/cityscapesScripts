@@ -14,7 +14,9 @@
 
 import glob
 import numpy as np
-from cityscapesscripts.helpers.labels import labels, id2label
+# i.21.4.1.1:28) TODO Q: 내컴에선 일케 임포트하면 되는데, 코랩에선 일케하면 못찾고 밑밑줄처럼 임포트해줘야 인식하네. 왜지??? 
+# from cityscapesscripts.helpers.labels import labels, id2label
+from cityscapesScripts.cityscapesscripts.helpers.labels import labels, id2label
 
 
 # MYROOTDIRPATH_J = "/content/datasetsJ/panopticSeg_dentPanoJ"
