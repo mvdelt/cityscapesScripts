@@ -215,18 +215,25 @@ args.quiet              = False
 #
 # i.21.3.29.0:02) thing 클래스들에 대한 정보만 넣어주면 됨. 
 #  지금현재는 내플젝에서 thing클래스들이 요 세개니까 얘네들의 정보만 넣어주면 됨.
-args.avgClassSize       = {
-    # "unlabeled_Label"    :  1000000 ,
-    # "mandible"    : 350000 ,
-    # "maxilla" :  80000 ,
-    # "sinus"      :  150000 ,
-    # "canal"        : 30000 ,
-    "t_normal"      : 50000 ,
-    "t_tx"        : 50000 ,
-    "impl"     :  50000 ,
-}
-
-
+# args.avgClassSize       = {
+#     # "unlabeled_Label"    :  1000000 ,
+#     # "mandible"    : 350000 ,
+#     # "maxilla" :  80000 ,
+#     # "sinus"      :  150000 ,
+#     # "canal"        : 30000 ,
+#     "t_normal"      : 50000 ,
+#     "t_tx"        : 50000 ,
+#     "impl"     :  50000 ,
+# }
+#
+# i.21.4.1.1:53) 내플젝에맞게 계산해준 avgClassSize 를 임포트. 
+#  참고로 val 데이터셋 파노 2개에 대해 현재 계산해준 결과: 
+#  {'t_normal': 9904.545454545454, 't_tx': 17264.0, 'impl': 24174.428571428572} 
+from cityscapesscripts.evaluation.evalPixelLevelSemanticLabelingJ_calculateAvgClassSizeJ import avgClassSizeJ, avgClassSizeJ_2
+print(f'j) avgClassSizeJ    : {avgClassSizeJ}')
+print(f'j) avgClassSizeJ_2  : {avgClassSizeJ_2}')
+args.avgClassSize = avgClassSizeJ_2 
+print(f'j) args.avgClassSize: {args.avgClassSize}') 
 
 # store some parameters for finding predictions in the args variable
 # the values are filled when the method getPrediction is first called

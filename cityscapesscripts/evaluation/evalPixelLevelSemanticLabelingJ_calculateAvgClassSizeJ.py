@@ -26,6 +26,11 @@ searchStr = "/content/datasetsJ/panopticSeg_dentPanoJ/gt/val/*_instanceIds.png" 
 gtList = glob.glob(searchStr)
 
 
+# i.21.4.1.1:52) 코랩에서 돌려본결과 아래와같이 방법1,2 결과 동일함. 
+# j) avgClassSizeJ   by 방법1: {'t_normal': 9904.545454545454, 't_tx': 17264.0, 'impl': 24174.428571428572}
+# j) avgClassSizeJ_2 by 방법2: {'t_normal': 9904.545454545454, 't_tx': 17264.0, 'impl': 24174.428571428572}
+
+
 # i.21.3.31.23:56) 방법 1. 뭔가 되게 좀 별로인 방법같음. 최적화안된듯한. 지금 넘늦은시간이라그런가 머리가안돌아감... 
 areaSum_and_insCnt = {
     # 't_normal': [23522, 4],
@@ -41,14 +46,14 @@ for label in labels:
         # areaSum
         gtArr_labelIds = gtArr//1000 # i. thing 들의 labelId들만 남고, stuff 등 나머지애들은 0 이 됨. 
         labelIds, areaSums = np.unique(gtArr_labelIds, return_counts=True) # labelIds 에는 thing 들의 labelId들만 있고, 나머지값들은 0. 
-        print(f'j) areaSums: {areaSums}') 
+        # print(f'j) areaSums: {areaSums}') 
         idx = np.where(labelIds==label.id)[0][0]
-        print(f'j) idx: {idx}')
+        # print(f'j) idx: {idx}')
         areaSum = areaSums[idx]
-        print(f'j) areaSums[idx]: {areaSums[idx]}')
-        print(f'j) areaSum_and_insCnt[label.name]: {areaSum_and_insCnt[label.name]}')
+        # print(f'j) areaSums[idx]: {areaSums[idx]}')
+        # print(f'j) areaSum_and_insCnt[label.name]: {areaSum_and_insCnt[label.name]}')
         areaSum_and_insCnt[label.name][0] += areaSum
-        print(f'j) areaSum_and_insCnt[label.name]: {areaSum_and_insCnt[label.name]}')
+        # print(f'j) areaSum_and_insCnt[label.name]: {areaSum_and_insCnt[label.name]}')
         # insCnt
         insIds = np.unique(gtArr)
         labelIds, insCnts = np.unique(insIds//1000, return_counts=True) 
