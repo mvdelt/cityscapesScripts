@@ -175,13 +175,14 @@ def readPredInfo(predInfoFileName,args):
     if (not os.path.isfile(predInfoFileName)):
         printError("Infofile '{}' for the predictions not found.".format(predInfoFileName))
     with open(predInfoFileName, 'r') as f:
-        for line in f:
+        for line in f: # i. "{} {} {}\n".format(os.path.basename(png_filename), class_id, score) <-Det2의 cityscapes_evaluation.py 에서는. 
             splittedLine         = line.split(" ")
             if len(splittedLine) != 3:
                 printError( "Invalid prediction file. Expected content: relPathPrediction1 labelIDPrediction1 confidencePrediction1" )
             if os.path.isabs(splittedLine[0]):
                 printError( "Invalid prediction file. First entry in each line must be a relative path." )
 
+            # i. 각각의 인스턴스의 mask 가 그려져있는 png파일의 경로. /21.3.31.11:22. 
             filename             = os.path.join( os.path.dirname(predInfoFileName),splittedLine[0] )
             filename             = os.path.abspath( filename )
 
@@ -191,7 +192,7 @@ def readPredInfo(predInfoFileName,args):
 
             imageInfo            = {}
             imageInfo["labelID"] = int(float(splittedLine[1]))
-            imageInfo["conf"]    = float(splittedLine[2])
+            imageInfo["conf"]    = float(splittedLine[2]) # i. 인스턴스 디텍션 스코어. /21.3.31.11:16. 
             predInfo[filename]   = imageInfo
 
     return predInfo
@@ -266,7 +267,7 @@ def matchGtWithPreds(predictionList,groundTruthList,gtInstances,args):
 
 # For a given frame, assign all predicted instances to ground truth instances
 def assignGt2Preds(gtInstancesOrig, gtImage, predInfo, args):
-    # In this method, we create two lists
+    # In this method, we create two lists     # i. <- lists 가 아니고 dicts. /21.3.31.13:45. 
     #  - predInstances: contains all predictions and their associated gt
     #  - gtInstances:   contains all gt instances and their associated predictions
     predInstances    = {}
@@ -290,8 +291,17 @@ def assignGt2Preds(gtInstancesOrig, gtImage, predInfo, args):
     voidLabelIDList = []
     for label in labels:
         if label.ignoreInEval:
-            voidLabelIDList.append(label.id)
-    boolVoid = np.in1d(gtNp, voidLabelIDList).reshape(gtNp.shape)
+            voidLabelIDList.append(label.id)    
+    # i.21.3.31.11:52) TODO 이거 잘못된듯!!!!!
+    #  voidLabelIDList 엔 ignoreInEval 이 True 인 label 의 label.id 들이 있는데 gtNp 엔 인스턴스id 들이 담겨있잖아. (gtNp 는 ~~_instanceIds.png 에서 온거임)
+    #  stuff 들은 label.id 와 인스턴스id 가 같지만, thing 들은 다르지. 
+    #  따라서, 만약 thing 중에서 ignoreInEval 이 True 인게 있다면, 이 코드로는 gtNp 에서 해당 thing 들을 잡아내질 못함!!
+    #  실제로 labels.py 의 labels(cityscapes 에서 제시하는 기본값) 보면, thing 중에서도 ignoreInEval 이 True 인것들이 있음. (id 29 'caravan', id 30 'trailer'.) 
+    #
+    #  TODO 따라서, 내생각엔 아래 두줄로 수정해야함. arr=arr//1000 이 문법 되나 확인필요. 
+    #  gtNp_labelIdsJ = np.copy(gtNp) // 1000
+    #  boolVoid = np.in1d(gtNp_labelIdsJ, voidLabelIDList).reshape(gtNp.shape) 
+    boolVoid = np.in1d(gtNp, voidLabelIDList).reshape(gtNp.shape) 
 
     # Loop through all prediction masks
     for predImageFile in predInfo:
@@ -303,7 +313,10 @@ def assignGt2Preds(gtInstancesOrig, gtImage, predInfo, args):
         labelName = id2label[int(labelID)].name
 
         # maybe we are not interested in that label
-        if not labelName in args.instLabels:
+        # i. Det2 에선 이미 프레딕션결과중 인스턴스만 predImageFile 이 된거라서,
+        #  요 if 문에 해당되어 continue 되는경우가 없을거임. 
+        if not labelName in args.instLabels: 
+            raise ValueError(f'j) 뭔가이상함!!!! {labelName} 이 stuff 인데, Det2 에선 이미 프레딕션결과중 인스턴스만 predImageFile 이 된건데??') # i. /21.3.31.13:15. 
             continue
 
         # Read the mask
@@ -465,6 +478,12 @@ def evaluateMatches(matches, args):
                     curTrue  = curTrue [ curMatch==True ]
                     curScore = curScore[ curMatch==True ]
 
+                    # i.21.3.31.15:24) TODO 이부분 좀 잘못된듯!!!! 
+                    #  nbIgnorePixels 를 overlap 계산시에 사용해주고,
+                    #  if not foundGt 일때는 nbIgnorePixels 이용하지 말고 그냥 바로 false positive 로 해줘야하지않나??? 
+                    #  overlap 계산시엔 분모계산시 nbIgnorePixels 값도 빼주도록 이렇게 수정하고말야: 
+                    #  overlap = float(gt["intersection"]) / (gt["pixelCount"]+pred["pixelCount"]-gt["intersection"]  -nbIgnorePixels) 
+                    #  
                     # collect non-matched predictions as false positive
                     for pred in predInstances:
                         foundGt = False
@@ -478,7 +497,7 @@ def evaluateMatches(matches, args):
                             nbIgnorePixels = pred["voidIntersection"]
                             for gt in pred["matchedGt"]:
                                 # group?
-                                if gt["instID"] < 1000:
+                                if gt["instID"] < 1000:  # i. TODO 지금 이 gt 는 stuff 랑 ignoreInEval=True 는 제외된건가?? 그게아니라면, group 중에서 ignoreInEval=True 인거는 이미 pred["voidIntersection"] 에 포함돼있잖아!!
                                     nbIgnorePixels += gt["intersection"]
                                 # small ground truth instances
                                 if gt["pixelCount"] < minRegionSize or gt["medDist"]>distanceTh or gt["distConf"]<distanceConf:
