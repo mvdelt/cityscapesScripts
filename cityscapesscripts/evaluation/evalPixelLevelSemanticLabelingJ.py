@@ -227,6 +227,7 @@ args.quiet              = False
 # }
 #
 # i.21.4.1.1:53) 내플젝에맞게 계산해준 avgClassSize 를 임포트. 
+#  (바로위처럼 하드코딩으로 avgClassSize 를 직접 작성해주는것이 아니고. 일케하면 새롭게 데이터(어노테이션해준거) 추가해도 걍 자동으로 계산되지.) 
 #  참고로 val 데이터셋 파노 2개에 대해 현재 계산해준 결과: 
 #  {'t_normal': 9904.545454545454, 't_tx': 17264.0, 'impl': 24174.428571428572} 
 from cityscapesscripts.evaluation.evalPixelLevelSemanticLabelingJ_calculateAvgClassSizeJ import avgClassSizeJ, avgClassSizeJ_2
