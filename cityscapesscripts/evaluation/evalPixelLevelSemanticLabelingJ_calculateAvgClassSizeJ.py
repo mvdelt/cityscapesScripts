@@ -22,7 +22,8 @@ from cityscapesscripts.helpers.labels import labels, id2label
 
 
 # MYROOTDIRPATH_J = "/content/datasetsJ/panopticSeg_dentPanoJ"
-searchStr = "/content/datasetsJ/panopticSeg_dentPanoJ/gt/val/*_instanceIds.png" # i. 코랩컴에서의 경로. val 데이터셋에대해서만 해주면 되는거겠지??(지금 이 파일에서 하는 계산말야)/21.3.31.22:29. 
+searchStr = "/content/datasetsJ/panopticSeg_dentPanoJ/gt/val/*_instanceIds.png" # i. 코랩컴에서의 경로. val 데이터셋에대해서만 해주면 되는거겠지??(지금 이 파일에서 하는 계산말야)/21.3.31.22:29.
+# i.21.4.2.23:31) ->TODO val 데이터셋에대해서만 계산해주면 되는건지, train 데이터셋까지도 싹다 포함해서 계산해주는게 더 좋을지 함 생각해보자. 
 gtList = glob.glob(searchStr)
 
 
