@@ -295,7 +295,12 @@ def generateInstanceStats(args):
 
 # Get absolute or normalized value from field in confusion matrix.
 def getMatrixFieldValue(confMatrix, i, j, args):
-    if args.normalized:
+    # i.21.4.14.19:49) 기본값은 저위에서 args.normalized=True 로 돼있는데,
+    #  지금 이 파이썬파일(지금 이 파이썬모듈, 즉 evalPixelLevelSemanticLabelingJ.py)
+    #  을 사용해주는곳에서 args.normalized 값을 따로 지정해주지 않으면 이 기본값이 적용되지. 
+    #  지금 Det2 의 cityscapes_evaluation.py 에서 지금 이 파이썬파일(파이썬모듈)을 사용해주는데, 
+    #  args 값들 설정해줄때 args.normalized 는 따로 설정 안해줫기때매 현재 이 파일의 저위에서 기본값으로 정해둔 args.normalized=True 상태임.     
+    if args.normalized: 
         rowSum = confMatrix[i].sum()
         if (rowSum == 0):
             return float('nan')
@@ -458,25 +463,58 @@ def writeJSONFile(wholeData, args):
     ensurePath(path)
     writeDict2JSON(wholeData, args.exportFile)
 
+
 # Print confusion matrix
+#
+# i.21.4.14.19:33) 아래 내가 붙여놓은 표와 같이 컨퓨젼매트릭스 그려지는듯.
+#  (어떤이유인지 코랩에서는 표로 안그려지고 한줄로 쭉 붙어서 출력되지만, 적당히 줄바꿈 해주면 아래 표처럼 됨.) 
+#    근데, 현재 args.normalized=True 로 돼있기때문에 
+#  getMatrixFieldValue 함수
+#  (args.normalized 값에따라, 컨퓨전매트릭스의 각 셀의 값(픽셀갯수)을 그대로 리턴하거나, row총합으로 나눈 노말라이즈된값을 리턴)
+#  의 리턴값이 컨퓨젼매트릭스의 각 셀의 값 그대로가 아니고, 해당 셀이 속한 row 의 모든셀의값들 총합으로 나눈 값이 리턴됨.
+#  그렇게 노말라이즈된 결과가 바로아래 내가 붙여놓은 테이블임.
+#    그리고 Prior 는 뭐냐면, (노말라이즈시키기전의, 즉 아래표와는 다른, 원래의)컨퓨젼매트릭스에서
+#  각 row 의 모든픽셀수 총합을 컨퓨젼매트릭스 전체 픽셀수 총합으로 나눈 값임 (각 row 마다 prior 값이 계산되는거지).
+#  즉, 각 row 는 gt(ground truth)를 의미하니까,
+#  전체 픽셀수(모든 테스트이미지들의 픽셀수 총 합) 중에서 각각의 gt 클래스가 점유하는 픽셀갯수를 비율로 나타낸것임. 
+#  getPrior 함수 보면 여기서 말하는 prior 가 뭔지 아주 간단히 알수있음. 
+#  -------------- ------ ------ ------ ------ ------ ------ ------ ------ ------- 
+#                |  u   |  m   |  m   |  s   |  c   |  t   |  t   |  i   | Prior |
+#  -------------- ------ ------ ------ ------ ------ ------ ------ ------ ------- 
+#  unlabeled_Lab | 0.98   0.01   0.00   0.01   0.00   0.00   0.00   0.00  0.5384      
+#       mandible | 0.04   0.94   0.00   0.00   0.01   0.00   0.00   0.00  0.2092       
+#        maxilla | 0.01   0.00   0.92   0.01   0.00   0.02   0.03   0.01  0.0433
+#          sinus | 0.03   0.00   0.03   0.94   0.00   0.00   0.00   0.00  0.0795  
+#          canal | 0.00   0.25   0.00   0.00   0.75   0.00   0.00   0.01  0.0173   
+#       t_normal | 0.03   0.02   0.01   0.00   0.00   0.83   0.11   0.00  0.0282       
+#           t_tx | 0.02   0.04   0.01   0.00   0.00   0.06   0.87   0.00  0.0403        
+#           impl | 0.03   0.01   0.00   0.00   0.00   0.00   0.16   0.81  0.0439 
+#  -------------- ------ ------ ------ ------ ------ ------ ------ ------ -------  
+#
+# i.21.4.14.20:46) 참고로, cityscapesScripts 깃헙의 Issues 에서 mcordts (cityscapesScripts 주 개발자) 가 남긴 답변 일부 발췌 (prior 로 검색해서 나온 내용):
+#  "...The script outputs a confusion matrix first. The letters on top are the first letters of the label names in the left column. 
+#  The prior is the proportion of pixels with the respective ground truth label. The nIoU is the iIoU of the paper. 
+#  Apparently, I used an n for normalized there instead of an i for instance."
+#    ->prior 가 뭔지 역시 내생각대로임. nIoU 의 n 이 노말라이즈의 의미인가했던것도 내추측이 맞았네. nIoU 가 iIou 나 똑같은거임. 
+# 
 def printConfMatrix(confMatrix, args):
     # print line
     print("\b{text:{fill}>{width}}".format(width=15, fill='-', text=" "), end=' ')
     for label in args.evalLabels:
         print("\b{text:{fill}>{width}}".format(width=args.printRow + 2, fill='-', text=" "), end=' ')
-    print("\b{text:{fill}>{width}}".format(width=args.printRow + 3, fill='-', text=" "))
+    print("\b{text:{fill}>{width}}".format(width=args.printRow + 3, fill='-', text=" ")) # i. 코랩에서는 여기서 줄바꿈이 안되고있음. end 값을 정해주지 않았으니 기본값인 \n 이 적용되어야할텐데 왜안되지? /21.4.14.20:54.
 
     # print label names
     print("\b{text:>{width}} |".format(width=13, text=""), end=' ')
     for label in args.evalLabels:
         print("\b{text:^{width}} |".format(width=args.printRow, text=id2label[label].name[0]), end=' ')
-    print("\b{text:>{width}} |".format(width=6, text="Prior"))
+    print("\b{text:>{width}} |".format(width=6, text="Prior")) # i. 여기서도 마찬가지로 줄바꿈 안되고있고. /21.4.14.20:55.
 
     # print line
     print("\b{text:{fill}>{width}}".format(width=15, fill='-', text=" "), end=' ')
     for label in args.evalLabels:
         print("\b{text:{fill}>{width}}".format(width=args.printRow + 2, fill='-', text=" "), end=' ')
-    print("\b{text:{fill}>{width}}".format(width=args.printRow + 3, fill='-', text=" "))
+    print("\b{text:{fill}>{width}}".format(width=args.printRow + 3, fill='-', text=" ")) # i. 여기서도 마찬가지로 줄바꿈 안되고있고. 아래 코드들 전부 다 그러함. /21.4.14.20:55.
 
     # print matrix
     for x in range(0, confMatrix.shape[0]):
@@ -497,10 +535,11 @@ def printConfMatrix(confMatrix, args):
         for y in range(0, len(confMatrix[x])):
             if (not y in args.evalLabels):
                 continue
-            matrixFieldValue = getMatrixFieldValue(confMatrix, x, y, args)
+            matrixFieldValue = getMatrixFieldValue(confMatrix, x, y, args) # i. 요놈이 각 셀의 값을 내뱉는놈. args.normalized=True/False 에 따라 리턴값 달라짐. /21.4.14.20:01. 
             print(getColorEntry(matrixFieldValue, args) + "\b{text:>{width}.2f}  ".format(width=args.printRow, text=matrixFieldValue) + args.nocol, end=' ')
         # print prior
         print(getColorEntry(prior, args) + "\b{text:>{width}.4f} ".format(width=6, text=prior) + args.nocol)
+    
     # print line
     print("\b{text:{fill}>{width}}".format(width=15, fill='-', text=" "), end=' ')
     for label in args.evalLabels:
@@ -688,17 +727,21 @@ def evaluatePair(predictionImgFileName, groundTruthImgFileName, confMatrix, inst
         # the slower python way     
         # i.21.3.30.0:09) ->일단 요 느린 파이썬방식 코드라도 이해완료. confMatrix 의 각 칸에 픽셀갯수 넣어주는 작업 하는거임. 
         #  (참고로 컨퓨젼매트릭스는 gt 클래스들과 pred된 클래스들에 대해 각각의 경우에 픽셀갯수 넣어준 매트릭스. 클래스갯수 x 클래스갯수 만큼 칸이 있는거지.) 
+        # i.21.4.11.10:08) confusion matrix 에서 TP,TN,FP,FN 이해완료. TP,TN,FP,FN 은 "각 클래스별로" 생각해야하는거네. 
+        #  즉, 클래스에따라 confusion matrix 의 특정 칸이 TP 일수도있고 TN 일수도있는거임.
+        #  좀더자세히는, confusion matrix 의 diagonal 칸들은 TP/TN 가능, 그 외의 칸들은 TP 말고 다(FP/FN/TN) 가능하네. 
         encoding_value = max(groundTruthNp.max(), predictionNp.max()).astype(np.int32) + 1
         encoded = (groundTruthNp.astype(np.int32) * encoding_value) + predictionNp
 
         values, cnt = np.unique(encoded, return_counts=True)
 
         for value, c in zip(values, cnt):
-            pred_id = value % encoding_value
-            gt_id = int((value - pred_id)/encoding_value)
+            pred_id = value % encoding_value # i. '나머지' 구하기. /21.4.11.10:01. 
+            gt_id = int((value - pred_id)/encoding_value) # i. '몫' 구하기. pred_id 빼줄필요 없고, int()대신 //써도되지. gt_id = value//encoding_value 이렇게. /21.4.11.9:58. 
             if not gt_id in args.evalLabels:
                 printError("Unknown label with id {:}".format(gt_id))
-            confMatrix[gt_id][pred_id] += c
+            # i. 이렇게해줬기때매 컨퓨젼매트릭스에서 row 가 gt 고 column 이 pred 가 되는거지. confMatrix[pred_id][gt_id]+=c 로 했으면 반대였겠지. /21.4.11.10:05. 
+            confMatrix[gt_id][pred_id] += c 
         
 
     if args.evalInstLevelScore:
@@ -728,6 +771,7 @@ def evaluatePair(predictionImgFileName, groundTruthImgFileName, confMatrix, inst
             tp = np.count_nonzero( predictionNp[gtInstMaskJ] == labelId ) 
             fn = instSize - tp
 
+            # i. avgClassSize, tp, fn 관련해 원래파일(evalPixelLevelSemanticLabeling.py)의 이위치에남긴 코멘트 참고. /21.4.11.9:04. 
             weight = args.avgClassSize[label.name] / float(instSize)
             tpWeighted = float(tp) * weight
             fnWeighted = float(fn) * weight
