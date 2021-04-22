@@ -61,10 +61,17 @@ import json, os
 # COCOFORM_OBJ_DET_ANNOJSON_LOADPATH_J = r"C:\Users\starriet\Downloads\panopticSeg_dentPanoJ\from_cocoannotator_for_panopticSegJ.json" 
 # i.21.3.14.23:48) 코랩컴에서의 경로로 변경.
 # i.21.3.24.18:24) json파일명에 _forTrain 붙여줌. val 위한 어노json 도 추가하면서, 구분위해.
-COCOFORM_OBJ_DET_ANNOJSON_FORTRAIN_LOADPATH_J      = "/content/datasetsJ/panopticSeg_dentPanoJ/from_cocoannotator_for_panopticSegJ_forTrain.json"
+COCOFORM_OBJ_DET_ANNOJSON_FORTRAIN_LOADPATH_J           = "/content/datasetsJ/panopticSeg_dentPanoJ/from_cocoannotator_for_panopticSegJ_forTrain.json"
 
 # i.21.3.24.18:24) val 위한 어노json 도 추가.
-COCOFORM_OBJ_DET_ANNOJSON_FORVAL_LOADPATH_J        = "/content/datasetsJ/panopticSeg_dentPanoJ/from_cocoannotator_for_panopticSegJ_forVal.json"
+COCOFORM_OBJ_DET_ANNOJSON_FORVAL_LOADPATH_J             = "/content/datasetsJ/panopticSeg_dentPanoJ/from_cocoannotator_for_panopticSegJ_forVal.json"
+
+# i.21.4.22.10:46) 사람의 프레딕션결과도 이밸류에이션해주기위해 추가.(모델vs사람 비교해서 그결과를 논문2에 넣어줘볼까해서.) 
+#  즉 이 어노json 은 이밸류에이션하고자하는 (평가대상이되는)사람이 어노테이션한 어노json 임. 
+#  이 어노json 을 평가할건데(즉, 이 어노json 은 gt 가 아니고 프레딕션결과지), 바로위의 val 을 위한 어노json(얘는 gt 지) 을 가지고 평가할거임.
+#  따라서, 바로위의 val 을 위한 어노json 과 똑같은 이미지들에 대해서 어노테이션되어있어야함. 
+COCOFORM_OBJ_DET_ANNOJSON_FORHUMANEVAL_LOADPATH_J       = "/content/datasetsJ/panopticSeg_dentPanoJ/from_cocoannotator_for_panopticSegJ_forHumanEval.json"
+
 
 
 
@@ -74,19 +81,34 @@ COCOFORM_OBJ_DET_ANNOJSON_FORVAL_LOADPATH_J        = "/content/datasetsJ/panopti
 # i.21.3.11.12:43) 기존의 convertTestJ 에서 panopticSeg_dentPanoJ 로 폴더명 바꿨고, 그안에 gt 및 inputOriPano 두가지 폴더 다시 만들어줬음.
 # i.21.3.14.23:48) 코랩컴에서의 경로로 변경.
 #  지금 train 폴더에 대해서만 하드코드해놧는데, train 뿐 아니라 val (또는 나아가서 test) 에 대해서도 해줄것. 
-CITYSCAPESFORM_POLYGONSJSON_FORTRAIN_SAVEDIRPATH_J = "/content/datasetsJ/panopticSeg_dentPanoJ/gt/train" 
+CITYSCAPESFORM_POLYGONSJSON_FORTRAIN_SAVEDIRPATH_J      = "/content/datasetsJ/panopticSeg_dentPanoJ/gt/train" 
 
 # i.21.3.24.18:28) val 추가.
-CITYSCAPESFORM_POLYGONSJSON_FORVAL_SAVEDIRPATH_J   = "/content/datasetsJ/panopticSeg_dentPanoJ/gt/val" 
+CITYSCAPESFORM_POLYGONSJSON_FORVAL_SAVEDIRPATH_J        = "/content/datasetsJ/panopticSeg_dentPanoJ/gt/val" 
+
+# i.21.4.22.11:15) 사람의 프레딕션결과도 이밸류에이션하기위해 추가. 
+#  편의상 기존코드 재사용위해 경로 그대로 두었는데(gt라고 되어있는 경로), 사실 얘는 gt가 아니지. 이밸류에이션해줄(평가해줄) 대상이니까. 
+CITYSCAPESFORM_POLYGONSJSON_FORHUMANEVAL_SAVEDIRPATH_J  = "/content/datasetsJ/panopticSeg_dentPanoJ/gt/forHumanEval_thisIsNotGT" 
 
 
 
+
+
+
+from pathlib import Path # i. /21.4.22.11:29.
 # i.21.3.24.18:30) val 도 추가했기때문에, for loop 이용해서 train 과 val 에 대해 똑같은작업 반복.
 for setName, json_loadpath, polygonsjson_savedirpath in \
-    [("train", COCOFORM_OBJ_DET_ANNOJSON_FORTRAIN_LOADPATH_J, CITYSCAPESFORM_POLYGONSJSON_FORTRAIN_SAVEDIRPATH_J), \
-     ("val",   COCOFORM_OBJ_DET_ANNOJSON_FORVAL_LOADPATH_J,   CITYSCAPESFORM_POLYGONSJSON_FORVAL_SAVEDIRPATH_J)]:
+    [("train",          COCOFORM_OBJ_DET_ANNOJSON_FORTRAIN_LOADPATH_J,       CITYSCAPESFORM_POLYGONSJSON_FORTRAIN_SAVEDIRPATH_J), \
+     ("val",            COCOFORM_OBJ_DET_ANNOJSON_FORVAL_LOADPATH_J,         CITYSCAPESFORM_POLYGONSJSON_FORVAL_SAVEDIRPATH_J), \
+     ("forHumanEval",   COCOFORM_OBJ_DET_ANNOJSON_FORHUMANEVAL_LOADPATH_J,   CITYSCAPESFORM_POLYGONSJSON_FORHUMANEVAL_SAVEDIRPATH_J)]: 
+    # i.21.4.22.11:21) ->사람의프레딕션결과 이밸류에이션하기위한 추가. 
 
     print(f'j) for \"{setName}\" set, converting \"시초\"어노json to ~~polygons.json...')
+
+
+    # i.21.4.22.11:22) 만약 폴더 없으면, 만들어줌.(forHumanEval_thisIsNotGT 폴더를 위한거임. 이 폴더는 현재 없는상태라서.) 
+    Path(polygonsjson_savedirpath).mkdir(parents=False, exist_ok=True)
+
 
     # COCO object detection 형식의 어노json파일을 읽어들임.
     try:
