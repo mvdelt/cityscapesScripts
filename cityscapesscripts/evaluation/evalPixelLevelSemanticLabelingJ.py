@@ -596,7 +596,8 @@ def evaluateImgLists(predictionImgList, groundTruthImgList, args):
 
 
     # i.21.4.22.17:44) 사람의 프레딕션결과도 이밸류에이션해주기로하면서, 사람/모델 누구의 프레딕션결과인지 출력좀해주려고 추가함.
-    print(f'======={args.modelNameJ}에 대한 이밸류에이션 결과임.=======') 
+    if hasattr(args, 'modelNameJ'):
+        print(f'======={args.modelNameJ}에 대한 이밸류에이션 결과임.=======') 
 
 
     if not args.quiet:
