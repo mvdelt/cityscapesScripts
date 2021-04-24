@@ -572,6 +572,8 @@ def plotConfMatrixJ(confMatrix):
     #     print("\b{text:^{width}} |".format(width=args.printRow, text=id2label[label].name[0]), end=' ')
     # print("\b{text:>{width}} |".format(width=6, text="Prior"), end='\n') # i. 여기서도 마찬가지로 줄바꿈 안되고있고. /21.4.14.20:55.
 
+    print(f'j) printing confMatrix...')
+    print(confMatrix)
 
     # df_cm = pd.DataFrame(confMatrix, index = [i for i in "ABCDEF"],columns = [i for i in "abcdef"])
     df_cm = pd.DataFrame(confMatrix, index = [i for i in "ummsctti"], columns = [i for i in "ummsctti"])
