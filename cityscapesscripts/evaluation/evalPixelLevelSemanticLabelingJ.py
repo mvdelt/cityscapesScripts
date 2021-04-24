@@ -558,30 +558,52 @@ def plotConfMatrixJ(confMatrix):
     import pandas as pd
     import matplotlib.pyplot as plt
 
-    # array = [[13,1,1,0,2,0],
-    #         [3,9,6,0,1,0],
-    #         [0,0,16,2,0,0],
-    #         [0,0,0,13,0,0],
-    #         [0,0,0,0,15,0],
-    #         [0,0,1,0,0,15]]
+    # # array = [[13,1,1,0,2,0],
+    # #         [3,9,6,0,1,0],
+    # #         [0,0,16,2,0,0],
+    # #         [0,0,0,13,0,0],
+    # #         [0,0,0,0,15,0],
+    # #         [0,0,1,0,0,15]]
 
     
-    # for label in args.evalLabels:
-    #     print("\b{text:^{width}} |".format(width=args.printRow, text=id2label[label].name[0]), end=' ')
-    # print("\b{text:>{width}} |".format(width=6, text="Prior"), end='\n') # i. 여기서도 마찬가지로 줄바꿈 안되고있고. /21.4.14.20:55.
+    # # for label in args.evalLabels:
+    # #     print("\b{text:^{width}} |".format(width=args.printRow, text=id2label[label].name[0]), end=' ')
+    # # print("\b{text:>{width}} |".format(width=6, text="Prior"), end='\n') # i. 여기서도 마찬가지로 줄바꿈 안되고있고. /21.4.14.20:55.
 
 
-    # df_cm = pd.DataFrame(confMatrix, index = [i for i in "ABCDEF"],columns = [i for i in "abcdef"])
-    df_cm = pd.DataFrame(confMatrix, index = [i for i in "ummsctti"], columns = [i for i in "ummsctti"])
+    # # df_cm = pd.DataFrame(confMatrix, index = [i for i in "ABCDEF"],columns = [i for i in "abcdef"])
+    # df_cm = pd.DataFrame(confMatrix, index = [i for i in "ummsctti"], columns = [i for i in "ummsctti"])
 
-    # plt.figure(figsize=(10,17))
-    sns.set(font_scale=1.4) # for label size
-    # sns.heatmap(df_cm, annot=True,  cmap=sns.cm.rocket_r, annot_kws={"size": 16}) # font size
-    # sns.heatmap(df_cm, annot=True,  cmap="Blues", annot_kws={"size": 16}) # font size
-    sns.heatmap(df_cm, annot=True,  cmap="YlGnBu", annot_kws={"size": 16}) # font size
-    # sns.heatmap(df_cm, annot=True,  cmap="twilight", annot_kws={"size": 16}) # font size
+    # # plt.figure(figsize=(10,17))
+    # sns.set(font_scale=1.4) # for label size
+    # # sns.heatmap(df_cm, annot=True,  cmap=sns.cm.rocket_r, annot_kws={"size": 16}) # font size
+    # # sns.heatmap(df_cm, annot=True,  cmap="Blues", annot_kws={"size": 16}) # font size
+    # sns.heatmap(df_cm, annot=True,  cmap="YlGnBu", annot_kws={"size": 16}) # font size
+    # # sns.heatmap(df_cm, annot=True,  cmap="twilight", annot_kws={"size": 16}) # font size
+
+    # plt.show()
+
+
+
+
+    array = [[13,1,1,0,2,0],
+            [3,9,6,0,1,0],
+            [0,0,16,2,0,0],
+            [0,0,0,13,0,0],
+            [0,0,0,0,15,0],
+            [0,0,1,0,0,15]]
+
+    df_cm = pd.DataFrame(array, range(6), range(6))
+    # plt.figure(figsize=(10,7))
+    sn.set(font_scale=1.4) # for label size
+    sn.heatmap(df_cm, annot=True, cmap='YlGnBu', annot_kws={"size": 16}) # font size
+
+    print( 'testJ')
 
     plt.show()
+
+    print( 'testJ 22') 
+
 
 
 
@@ -669,7 +691,7 @@ def evaluateImgLists(predictionImgList, groundTruthImgList, args):
         printConfMatrix(confMatrix, args)
     
     
-    # i.21.4.24.20:49) plot confusion matrix.
+    # i.21.4.24.20:49) plot confusion matrix. 내가추가. 
     if (not args.quiet):
         plotConfMatrixJ(confMatrix)
     
