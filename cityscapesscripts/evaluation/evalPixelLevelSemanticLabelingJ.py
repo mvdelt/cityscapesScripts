@@ -612,7 +612,7 @@ def plotConfMatrixJ(confMatrix):
 
 
     # df_cm = pd.DataFrame(confMatrix, index = [i for i in "ABCDEF"],columns = [i for i in "abcdef"])
-    df_cm = pd.DataFrame(confMatrix_rowNormalized_withPriorJ, index = [i for i in "ummsctti"], columns = [i for i in "ummsctti"])
+    df_cm = pd.DataFrame(confMatrix_rowNormalized_withPriorJ, index = [i for i in "ummsctti"], columns = [i for i in "ummscttiP"])
 
     # plt.figure(figsize=(10,17))
     sns.set(font_scale=1.4) # for label size
