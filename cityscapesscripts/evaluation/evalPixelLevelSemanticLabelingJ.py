@@ -593,8 +593,9 @@ def plotConfMatrixJ(confMatrix):
         for y in range(0, len(confMatrix[x])):
             if (not y in args.evalLabels):
                 continue
-            confMatrix_rowNormalizedJ[x,y] = getMatrixFieldValue(confMatrix, x, y, args) # i. 요놈이 각 셀의 값을 내뱉는놈. args.normalized=True/False 에 따라 리턴값 달라짐. /21.4.14.20:01. 
-
+            a = getMatrixFieldValue(confMatrix, x, y, args) # i. 요놈이 각 셀의 값을 내뱉는놈. args.normalized=True/False 에 따라 리턴값 달라짐. /21.4.14.20:01. 
+            confMatrix_rowNormalizedJ[x,y] = a
+            print(a)
 
         # # print prior
         # print(getColorEntry(prior, args) + "\b{text:>{width}.4f} ".format(width=6, text=prior) + args.nocol)
