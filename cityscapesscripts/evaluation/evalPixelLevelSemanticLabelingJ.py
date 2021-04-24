@@ -550,7 +550,7 @@ def printConfMatrix(confMatrix, args):
         print("\b{text:{fill}>{width}}".format(width=args.printRow + 2, fill='-', text=" "), end=' ')
     # print("\b{text:{fill}>{width}}".format(width=args.printRow + 3, fill='-', text=" "), end=' ')
     print("\b{text:{fill}>{width}}".format(width=args.printRow + 3, fill='-', text=" "))
-    print() # i. <-코랩에서 출력시 바로윗줄프린트에서 줄바꿈이 안돼서 내가 집어넣음.(바로위 프린트는 원소스코드에선 end=' '지만, 줄바꿈 안해주면 그다음 프린트가 바로이어서 출력돼버림.))/21.4.24.19:13. 
+    # print() # i. <-코랩에서 출력시 바로윗줄프린트에서 줄바꿈이 안돼서 내가 집어넣음.(바로위 프린트는 원소스코드에선 end=' '지만, 줄바꿈 안해주면 그다음 프린트가 바로이어서 출력돼버림.))/21.4.24.19:13. 
 
 
 
@@ -578,7 +578,7 @@ def plotConfMatrixJ(confMatrix):
 
     # plt.figure(figsize=(10,17))
     sns.set(font_scale=1.4) # for label size
-    
+
     # sns.heatmap(df_cm, annot=True,  cmap=sns.cm.rocket_r, annot_kws={"size": 16}) # font size
     # sns.heatmap(df_cm, annot=True,  cmap="Blues", annot_kws={"size": 16}) # font size
     sns.heatmap(df_cm, annot=True,  cmap="YlGnBu", annot_kws={"size": 16}) # font size
@@ -588,12 +588,8 @@ def plotConfMatrixJ(confMatrix):
     #  파일로 실행시키면 플롯 출력 안됨. 그래서 걍 코랩클라우드컴에 저장해주려함.
     # plt.show() 
 
-    # plt.savefig('/content/confMatrixJ.png', bbox_inches='tight', dpi=1200)
-    plt.savefig('/content/confMatrixJ.png', dpi=1200)
-
-
-
-
+    # plt.savefig('/content/confMatrixJ.png', bbox_inches='tight', dpi=1200) 
+    plt.savefig('/content/confMatrixJ.png', dpi=100)
 
 
 
