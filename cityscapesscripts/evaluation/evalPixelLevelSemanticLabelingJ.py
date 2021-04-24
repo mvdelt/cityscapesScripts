@@ -667,6 +667,12 @@ def evaluateImgLists(predictionImgList, groundTruthImgList, args):
     # print confusion matrix
     if (not args.quiet):
         printConfMatrix(confMatrix, args)
+    
+    
+    # i.21.4.24.20:49) plot confusion matrix.
+    if (not args.quiet):
+        plotConfMatrixJ(confMatrix)
+    
 
     # Calculate IOU scores on class level from matrix
     classScoreList = {}
