@@ -598,6 +598,7 @@ def plotConfMatrixJ(confMatrix):
 def printClassScores(scoreList, instScoreList, args):
     if (args.quiet):
         return
+    print('j) test test test 이거 줄바꿈되어서 출력되나 테스트하려고.')
     print(args.bold + "classes          IoU      nIoU" + args.nocol)
     print("--------------------------------")
     for label in args.evalLabels:
