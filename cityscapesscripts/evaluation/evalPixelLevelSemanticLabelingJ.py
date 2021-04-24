@@ -502,19 +502,19 @@ def printConfMatrix(confMatrix, args):
     print("\b{text:{fill}>{width}}".format(width=15, fill='-', text=" "), end=' ')
     for label in args.evalLabels:
         print("\b{text:{fill}>{width}}".format(width=args.printRow + 2, fill='-', text=" "), end=' ')
-    print("\b{text:{fill}>{width}}".format(width=args.printRow + 3, fill='-', text=" ")) # i. 코랩에서는 여기서 줄바꿈이 안되고있음. end 값을 정해주지 않았으니 기본값인 \n 이 적용되어야할텐데 왜안되지? /21.4.14.20:54.
+    print("\b{text:{fill}>{width}}".format(width=args.printRow + 3, fill='-', text=" "), end='\n') # i. 코랩에서는 여기서 줄바꿈이 안되고있음. end 값을 정해주지 않았으니 기본값인 \n 이 적용되어야할텐데 왜안되지? /21.4.14.20:54.
 
     # print label names
     print("\b{text:>{width}} |".format(width=13, text=""), end=' ')
     for label in args.evalLabels:
         print("\b{text:^{width}} |".format(width=args.printRow, text=id2label[label].name[0]), end=' ')
-    print("\b{text:>{width}} |".format(width=6, text="Prior")) # i. 여기서도 마찬가지로 줄바꿈 안되고있고. /21.4.14.20:55.
+    print("\b{text:>{width}} |".format(width=6, text="Prior"), end='\n') # i. 여기서도 마찬가지로 줄바꿈 안되고있고. /21.4.14.20:55.
 
     # print line
     print("\b{text:{fill}>{width}}".format(width=15, fill='-', text=" "), end=' ')
     for label in args.evalLabels:
         print("\b{text:{fill}>{width}}".format(width=args.printRow + 2, fill='-', text=" "), end=' ')
-    print("\b{text:{fill}>{width}}".format(width=args.printRow + 3, fill='-', text=" ")) # i. 여기서도 마찬가지로 줄바꿈 안되고있고. 아래 코드들 전부 다 그러함. /21.4.14.20:55.
+    print("\b{text:{fill}>{width}}".format(width=args.printRow + 3, fill='-', text=" "), end='\n') # i. 여기서도 마찬가지로 줄바꿈 안되고있고. 아래 코드들 전부 다 그러함. /21.4.14.20:55.
 
     # print matrix
     for x in range(0, confMatrix.shape[0]):
@@ -595,7 +595,7 @@ def evaluateImgLists(predictionImgList, groundTruthImgList, args):
     nbPixels      = 0
 
 
-    # i.21.4.22.17:44) 사람의 프레딕션결과도 이밸류에이션해주기로하면서, 사람/모델 누구의 프레딕션결과인지 출력좀해주려고 추가함.
+    # i.21.4.22.17:44) 사람의 프레딕션결과도 이밸류에이션해주기로하면서, 사람/모델 누구의 프레딕션결과인지 출력좀해주려고 추가함.(현재는 사람일때만 args.modelNameJ 값 지정해줬음.)
     if hasattr(args, 'modelNameJ'):
         print(f'======={args.modelNameJ}에 대한 이밸류에이션 결과임.=======') 
 
