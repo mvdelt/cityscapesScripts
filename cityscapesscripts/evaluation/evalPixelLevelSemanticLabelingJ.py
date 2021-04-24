@@ -549,8 +549,7 @@ def printConfMatrix(confMatrix, args):
     for label in args.evalLabels:
         print("\b{text:{fill}>{width}}".format(width=args.printRow + 2, fill='-', text=" "), end=' ')
     # print("\b{text:{fill}>{width}}".format(width=args.printRow + 3, fill='-', text=" "), end=' ')
-    print("\b{text:{fill}>{width}}".format(width=args.printRow + 3, fill='-', text=" "))
-    # print() # i. <-코랩에서 출력시 바로윗줄프린트에서 줄바꿈이 안돼서 내가 집어넣음.(바로위 프린트는 원소스코드에선 end=' '지만, 줄바꿈 안해주면 그다음 프린트가 바로이어서 출력돼버림.))/21.4.24.19:13. 
+    print("\b{text:{fill}>{width}}".format(width=args.printRow + 3, fill='-', text=" ")) # i. 요건 또 end=' ' 없애니까 줄바꿈 되는것같네? /21.4.24.21:32.
 
 
 
@@ -572,11 +571,44 @@ def plotConfMatrixJ(confMatrix):
     #     print("\b{text:^{width}} |".format(width=args.printRow, text=id2label[label].name[0]), end=' ')
     # print("\b{text:>{width}} |".format(width=6, text="Prior"), end='\n') # i. 여기서도 마찬가지로 줄바꿈 안되고있고. /21.4.14.20:55.
 
-    print(f'j) printing confMatrix...')
+    print(f'j) printing confMatrix (before normalization) ...') 
     print(confMatrix)
+    
+
+    confMatrix_rowNormalizedJ = np.copy(confMatrix)
+
+    # print matrix
+    for x in range(0, confMatrix.shape[0]):
+        if (not x in args.evalLabels):
+            continue
+        # get prior of this label
+        prior = getPrior(x, confMatrix)
+        # skip if label does not exist in ground truth
+        if prior < 1e-9:
+            continue
+
+        name = id2label[x].name
+
+        # print matrix content
+        for y in range(0, len(confMatrix[x])):
+            if (not y in args.evalLabels):
+                continue
+            confMatrix_rowNormalizedJ[x,y] = getMatrixFieldValue(confMatrix, x, y, args) # i. 요놈이 각 셀의 값을 내뱉는놈. args.normalized=True/False 에 따라 리턴값 달라짐. /21.4.14.20:01. 
+
+
+        # # print prior
+        # print(getColorEntry(prior, args) + "\b{text:>{width}.4f} ".format(width=6, text=prior) + args.nocol)
+        # print() # i. <-코랩에서 출력시 바로윗줄프린트에서 줄바꿈이 안돼서 내가 집어넣음. /21.4.24.19:13. 
+
+
+    print(f'j) printing confMatrix (after normalization) ...') 
+    print(confMatrix_rowNormalizedJ)
+
+
+
 
     # df_cm = pd.DataFrame(confMatrix, index = [i for i in "ABCDEF"],columns = [i for i in "abcdef"])
-    df_cm = pd.DataFrame(confMatrix, index = [i for i in "ummsctti"], columns = [i for i in "ummsctti"])
+    df_cm = pd.DataFrame(confMatrix_rowNormalizedJ, index = [i for i in "ummsctti"], columns = [i for i in "ummsctti"])
 
     # plt.figure(figsize=(10,17))
     sns.set(font_scale=1.4) # for label size
@@ -600,7 +632,6 @@ def plotConfMatrixJ(confMatrix):
 def printClassScores(scoreList, instScoreList, args):
     if (args.quiet):
         return
-    print('j) test test test 이거 줄바꿈되어서 출력되나 테스트하려고.')
     print(args.bold + "classes          IoU      nIoU" + args.nocol)
     print("--------------------------------")
     for label in args.evalLabels:
