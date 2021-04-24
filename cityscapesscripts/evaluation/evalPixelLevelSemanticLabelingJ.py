@@ -575,9 +575,12 @@ def plotConfMatrixJ(confMatrix):
     print(confMatrix)
     
 
-    confMatrix_rowNormalizedJ = np.copy(confMatrix).astype('float32')
+    # i. make an empty matrix (numpy array).
+    # confMatrix_rowNormalizedJ = np.copy(confMatrix).astype('float16')
+    print(f'j) confMatrix.shape ((8,8) 이어야지.): {confMatrix.shape}')
+    confMatrix_rowNormalized_withPriorJ = np.zeros(shape=(confMatrix.shape[0], confMatrix.shape[1] + 1), dtype=np.float32) # i. prior 를 위해서 column 갯수 1 추가. 
 
-    # print matrix
+    # i. assign values to matrix.
     for x in range(0, confMatrix.shape[0]):
         if (not x in args.evalLabels):
             continue
@@ -589,27 +592,27 @@ def plotConfMatrixJ(confMatrix):
 
         name = id2label[x].name
 
-        # print matrix content
+        # i. assign each element into this row.
         for y in range(0, len(confMatrix[x])):
             if (not y in args.evalLabels):
                 continue
             a = getMatrixFieldValue(confMatrix, x, y, args) # i. 요놈이 각 셀의 값을 내뱉는놈. args.normalized=True/False 에 따라 리턴값 달라짐. /21.4.14.20:01. 
-            confMatrix_rowNormalizedJ[x,y] = a
+            confMatrix_rowNormalized_withPriorJ[x,y] = a
             # print(a)
 
-        # # print prior
-        # print(getColorEntry(prior, args) + "\b{text:>{width}.4f} ".format(width=6, text=prior) + args.nocol)
-        # print() # i. <-코랩에서 출력시 바로윗줄프린트에서 줄바꿈이 안돼서 내가 집어넣음. /21.4.24.19:13. 
+        # i. assign prior
+        confMatrix_rowNormalized_withPriorJ[x, -1] = prior
+        
 
 
-    print(f'j) printing confMatrix (after normalization) ...') 
-    print(confMatrix_rowNormalizedJ)
+    print(f'j) printing confMatrix (after normalize & put priors) ...') 
+    print(confMatrix_rowNormalized_withPriorJ)
 
 
 
 
     # df_cm = pd.DataFrame(confMatrix, index = [i for i in "ABCDEF"],columns = [i for i in "abcdef"])
-    df_cm = pd.DataFrame(confMatrix_rowNormalizedJ, index = [i for i in "ummsctti"], columns = [i for i in "ummsctti"])
+    df_cm = pd.DataFrame(confMatrix_rowNormalized_withPriorJ, index = [i for i in "ummsctti"], columns = [i for i in "ummsctti"])
 
     # plt.figure(figsize=(10,17))
     sns.set(font_scale=1.4) # for label size
