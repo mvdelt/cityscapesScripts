@@ -603,7 +603,8 @@ def plotConfMatrixJ(confMatrix):
         # i. assign prior
         confMatrix_rowNormalized_withPriorJ[x, -1] = prior
         
-
+    # i. 모든 원소들의 소숫점 자릿수 잘라줌. (안그럼 너무 숫자가 길어져서.)
+    confMatrix_rowNormalized_withPriorJ = np.round(confMatrix_rowNormalized_withPriorJ, 3)
 
     print(f'j) printing confMatrix (after normalize & put priors) ...') 
     print(confMatrix_rowNormalized_withPriorJ)
