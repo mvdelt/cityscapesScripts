@@ -575,7 +575,7 @@ def plotConfMatrixJ(confMatrix):
     print(confMatrix)
     
 
-    confMatrix_rowNormalizedJ = np.copy(confMatrix)
+    confMatrix_rowNormalizedJ = np.copy(confMatrix).astype('float32')
 
     # print matrix
     for x in range(0, confMatrix.shape[0]):
@@ -595,7 +595,7 @@ def plotConfMatrixJ(confMatrix):
                 continue
             a = getMatrixFieldValue(confMatrix, x, y, args) # i. 요놈이 각 셀의 값을 내뱉는놈. args.normalized=True/False 에 따라 리턴값 달라짐. /21.4.14.20:01. 
             confMatrix_rowNormalizedJ[x,y] = a
-            print(a)
+            # print(a)
 
         # # print prior
         # print(getColorEntry(prior, args) + "\b{text:>{width}.4f} ".format(width=6, text=prior) + args.nocol)
