@@ -595,8 +595,8 @@ def plotConfMatrixJ(confMatrix):
 
     df_cm = pd.DataFrame(array, range(6), range(6))
     # plt.figure(figsize=(10,7))
-    sn.set(font_scale=1.4) # for label size
-    sn.heatmap(df_cm, annot=True, cmap='YlGnBu', annot_kws={"size": 16}) # font size
+    sns.set(font_scale=1.4) # for label size
+    sns.heatmap(df_cm, annot=True, cmap='YlGnBu', annot_kws={"size": 16}) # font size
 
     print( 'testJ')
 
