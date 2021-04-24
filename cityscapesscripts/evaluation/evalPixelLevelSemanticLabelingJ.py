@@ -503,18 +503,21 @@ def printConfMatrix(confMatrix, args):
     for label in args.evalLabels:
         print("\b{text:{fill}>{width}}".format(width=args.printRow + 2, fill='-', text=" "), end=' ')
     print("\b{text:{fill}>{width}}".format(width=args.printRow + 3, fill='-', text=" "), end='\n') # i. 코랩에서는 여기서 줄바꿈이 안되고있음. end 값을 정해주지 않았으니 기본값인 \n 이 적용되어야할텐데 왜안되지? /21.4.14.20:54.
+    print()
 
     # print label names
     print("\b{text:>{width}} |".format(width=13, text=""), end=' ')
     for label in args.evalLabels:
         print("\b{text:^{width}} |".format(width=args.printRow, text=id2label[label].name[0]), end=' ')
     print("\b{text:>{width}} |".format(width=6, text="Prior"), end='\n') # i. 여기서도 마찬가지로 줄바꿈 안되고있고. /21.4.14.20:55.
+    print()
 
     # print line
     print("\b{text:{fill}>{width}}".format(width=15, fill='-', text=" "), end=' ')
     for label in args.evalLabels:
         print("\b{text:{fill}>{width}}".format(width=args.printRow + 2, fill='-', text=" "), end=' ')
-    print("\b{text:{fill}>{width}}".format(width=args.printRow + 3, fill='-', text=" "), end='\n') # i. 여기서도 마찬가지로 줄바꿈 안되고있고. 아래 코드들 전부 다 그러함. /21.4.14.20:55.
+    print("\b{text:{fill}>{width}}".format(width=args.printRow + 3, fill='-', text=" "), end='\n') # i. 여기서도마찬가지. 아래 코드들 전부 다 그러함. end='\n' 이라고 명시적으로 적어줘도 안됨. 코랩에서만 그러는듯./21.4.14.20:55.
+    print()
 
     # print matrix
     for x in range(0, confMatrix.shape[0]):

@@ -143,7 +143,9 @@ def printConfMatrix(confMatrix, args):
     print("\b{text:>{width}} |".format(width=13, text=""), end=' ')
     for label in args.evalLabels:
         print("\b{text:^{width}} |".format(width=args.printRow, text=id2label[label].name[0]), end=' ')
-    print("\b{text:>{width}} |".format(width=6, text="Prior")) # i. 여기서도 마찬가지로 줄바꿈 안되고있고. /21.4.14.20:55.
+    print("\b{text:>{width}} |".format(width=6, text="Prior"), end='   $%$*$234r   ' ) # i. 여기서도 마찬가지로 줄바꿈 안되고있고. /21.4.14.20:55.
+
+    print()
 
     # print line
     print("\b{text:{fill}>{width}}".format(width=15, fill='-', text=" "), end=' ')
