@@ -548,7 +548,9 @@ def printConfMatrix(confMatrix, args):
     print("\b{text:{fill}>{width}}".format(width=15, fill='-', text=" "), end=' ')
     for label in args.evalLabels:
         print("\b{text:{fill}>{width}}".format(width=args.printRow + 2, fill='-', text=" "), end=' ')
-    print("\b{text:{fill}>{width}}".format(width=args.printRow + 3, fill='-', text=" "), end=' ')
+    # print("\b{text:{fill}>{width}}".format(width=args.printRow + 3, fill='-', text=" "), end=' ')
+    print("\b{text:{fill}>{width}}".format(width=args.printRow + 3, fill='-', text=" "))
+    print() # i. <-코랩에서 출력시 바로윗줄프린트에서 줄바꿈이 안돼서 내가 집어넣음.(바로위 프린트는 원소스코드에선 end=' '지만, 줄바꿈 안해주면 그다음 프린트가 바로이어서 출력돼버림.))/21.4.24.19:13. 
 
 
 
@@ -558,51 +560,39 @@ def plotConfMatrixJ(confMatrix):
     import pandas as pd
     import matplotlib.pyplot as plt
 
-    # # array = [[13,1,1,0,2,0],
-    # #         [3,9,6,0,1,0],
-    # #         [0,0,16,2,0,0],
-    # #         [0,0,0,13,0,0],
-    # #         [0,0,0,0,15,0],
-    # #         [0,0,1,0,0,15]]
+    # array = [[13,1,1,0,2,0],
+    #         [3,9,6,0,1,0],
+    #         [0,0,16,2,0,0],
+    #         [0,0,0,13,0,0],
+    #         [0,0,0,0,15,0],
+    #         [0,0,1,0,0,15]]
 
     
-    # # for label in args.evalLabels:
-    # #     print("\b{text:^{width}} |".format(width=args.printRow, text=id2label[label].name[0]), end=' ')
-    # # print("\b{text:>{width}} |".format(width=6, text="Prior"), end='\n') # i. 여기서도 마찬가지로 줄바꿈 안되고있고. /21.4.14.20:55.
+    # for label in args.evalLabels:
+    #     print("\b{text:^{width}} |".format(width=args.printRow, text=id2label[label].name[0]), end=' ')
+    # print("\b{text:>{width}} |".format(width=6, text="Prior"), end='\n') # i. 여기서도 마찬가지로 줄바꿈 안되고있고. /21.4.14.20:55.
 
 
-    # # df_cm = pd.DataFrame(confMatrix, index = [i for i in "ABCDEF"],columns = [i for i in "abcdef"])
-    # df_cm = pd.DataFrame(confMatrix, index = [i for i in "ummsctti"], columns = [i for i in "ummsctti"])
+    # df_cm = pd.DataFrame(confMatrix, index = [i for i in "ABCDEF"],columns = [i for i in "abcdef"])
+    df_cm = pd.DataFrame(confMatrix, index = [i for i in "ummsctti"], columns = [i for i in "ummsctti"])
 
-    # # plt.figure(figsize=(10,17))
-    # sns.set(font_scale=1.4) # for label size
-    # # sns.heatmap(df_cm, annot=True,  cmap=sns.cm.rocket_r, annot_kws={"size": 16}) # font size
-    # # sns.heatmap(df_cm, annot=True,  cmap="Blues", annot_kws={"size": 16}) # font size
-    # sns.heatmap(df_cm, annot=True,  cmap="YlGnBu", annot_kws={"size": 16}) # font size
-    # # sns.heatmap(df_cm, annot=True,  cmap="twilight", annot_kws={"size": 16}) # font size
-
-    # plt.show()
-
-
-
-
-    array = [[13,1,1,0,2,0],
-            [3,9,6,0,1,0],
-            [0,0,16,2,0,0],
-            [0,0,0,13,0,0],
-            [0,0,0,0,15,0],
-            [0,0,1,0,0,15]]
-
-    df_cm = pd.DataFrame(array, range(6), range(6))
-    # plt.figure(figsize=(10,7))
+    # plt.figure(figsize=(10,17))
     sns.set(font_scale=1.4) # for label size
-    sns.heatmap(df_cm, annot=True, cmap='YlGnBu', annot_kws={"size": 16}) # font size
+    
+    # sns.heatmap(df_cm, annot=True,  cmap=sns.cm.rocket_r, annot_kws={"size": 16}) # font size
+    # sns.heatmap(df_cm, annot=True,  cmap="Blues", annot_kws={"size": 16}) # font size
+    sns.heatmap(df_cm, annot=True,  cmap="YlGnBu", annot_kws={"size": 16}) # font size
+    # sns.heatmap(df_cm, annot=True,  cmap="twilight", annot_kws={"size": 16}) # font size
 
-    print( 'testJ')
+    # i. 코랩에선 코랩 셀에서 바로 이거 실행하면 플롯 출력되지만, 
+    #  파일로 실행시키면 플롯 출력 안됨. 그래서 걍 코랩클라우드컴에 저장해주려함.
+    # plt.show() 
 
-    plt.show()
+    # plt.savefig('/content/confMatrixJ.png', bbox_inches='tight', dpi=1200)
+    plt.savefig('/content/confMatrixJ.png', dpi=1200)
 
-    print( 'testJ 22') 
+
+
 
 
 
