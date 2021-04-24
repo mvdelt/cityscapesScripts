@@ -576,8 +576,8 @@ def plotConfMatrixJ(confMatrix):
     
 
     # i. make an empty matrix (numpy array).
-    # confMatrix_rowNormalizedJ = np.copy(confMatrix).astype('float16')
-    print(f'j) confMatrix.shape ((8,8) 이어야지.): {confMatrix.shape}')
+    # confMatrix_rowNormalizedJ = np.copy(confMatrix).astype('float32')
+    # print(f'j) confMatrix.shape ((8,8) 이어야지.): {confMatrix.shape}') # (8, 8)
     confMatrix_rowNormalized_withPriorJ = np.zeros(shape=(confMatrix.shape[0], confMatrix.shape[1] + 1), dtype=np.float32) # i. prior 를 위해서 column 갯수 1 추가. 
 
     # i. assign values to matrix.
@@ -611,7 +611,6 @@ def plotConfMatrixJ(confMatrix):
 
 
 
-
     # df_cm = pd.DataFrame(confMatrix, index = [i for i in "ABCDEF"],columns = [i for i in "abcdef"])
     df_cm = pd.DataFrame(confMatrix_rowNormalized_withPriorJ, index = [i for i in "ummsctti"], columns = [i for i in "ummscttiP"])
 
@@ -620,7 +619,7 @@ def plotConfMatrixJ(confMatrix):
 
     # sns.heatmap(df_cm, annot=True,  cmap=sns.cm.rocket_r, annot_kws={"size": 16}) # font size
     # sns.heatmap(df_cm, annot=True,  cmap="Blues", annot_kws={"size": 16}) # font size
-    sns.heatmap(df_cm, annot=True,  cmap="YlGnBu", annot_kws={"size": 16}) # font size
+    sns.heatmap(df_cm, annot=True,  cmap="YlGnBu", annot_kws={"size": 10}) # font size
     # sns.heatmap(df_cm, annot=True,  cmap="twilight", annot_kws={"size": 16}) # font size
 
     # i. 코랩에선 코랩 셀에서 바로 이거 실행하면 플롯 출력되지만, 
@@ -628,7 +627,7 @@ def plotConfMatrixJ(confMatrix):
     # plt.show() 
 
     # plt.savefig('/content/confMatrixJ.png', bbox_inches='tight', dpi=1200) 
-    plt.savefig('/content/confMatrixJ.png', dpi=100)
+    plt.savefig('/content/confMatrixJ.png', bbox_inches='tight', dpi=100)
 
 
 
