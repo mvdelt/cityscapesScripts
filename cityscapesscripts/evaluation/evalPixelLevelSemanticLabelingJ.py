@@ -627,7 +627,7 @@ def plotConfMatrixJ(confMatrix):
     # plt.show() 
 
     # plt.savefig('/content/confMatrixJ.png', bbox_inches='tight', dpi=1200) 
-    plt.savefig('/content/confMatrixJ.png', bbox_inches='tight', dpi=100)
+    plt.savefig('/content/confMatrixJ.png', bbox_inches='tight', dpi=100) # i. 코랩클라우드컴에 저장. 
 
 
 
