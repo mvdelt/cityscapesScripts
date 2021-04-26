@@ -12,7 +12,6 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib
 
-
 # array = [[13.1,1,1,0,2,0.248],
 #          [3.1648,9,6,0,1,0],
 #          [0,0,16.14,2.1,0,0],
@@ -21,8 +20,6 @@ import matplotlib
 #          [0.011,0,1,0,0,15]]
 
 # df_cm = pd.DataFrame(array, index = [i for i in 'ABCDEF'], columns = [i for i in 'abcdef'])
-
-
 
 
 array = [[0.981, 0.006, 0.002, 0.006, 0.   , 0.002, 0.002, 0.001, 0.537],
